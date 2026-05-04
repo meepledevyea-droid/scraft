@@ -2140,7 +2140,7 @@
       state.auth.deviceId = getOrCreateDeviceId();
       state.auth.customId = makeCustomId(state.auth.deviceId);
       authUsernameInput.value = localStorage.getItem(ACCOUNT_LAST_USERNAME_KEY) || "";
-      accountStatus.textContent = "log in or create an account this account will be tied to this device";
+      accountStatus.textContent = "log in or create an account you can stay signed in on this device";
       authStatusText.textContent = "";
       showAuthScreen();
       renderAuthUi();
@@ -2182,7 +2182,7 @@
         state.auth.signedIn = false;
         state.auth.sessionTicket = "";
         state.auth.playFabId = "";
-        accountStatus.textContent = "log in or create an account this account will be tied to this device";
+        accountStatus.textContent = "log in or create an account you can stay signed in on this device";
         renderAuthUi();
         showAuthScreen();
         return false;
@@ -2208,14 +2208,6 @@
         },
         Permission: "Private"
       }, true);
-    }
-
-    async function getBoundDeviceRecord() {
-      const result = await playFabCall("Client/GetUserData", {
-        Keys: [PLAYFAB_DEVICE_BINDING_KEY]
-      }, true);
-      const record = result?.data?.Data?.[PLAYFAB_DEVICE_BINDING_KEY]?.Value;
-      return record ? JSON.parse(record) : null;
     }
 
     async function finishAuth(loginData, username) {
@@ -2273,7 +2265,7 @@
 
         await finishAuth(result?.data, username);
         await linkCurrentDeviceToAccount();
-        accountStatus.textContent = `account created and tied to this device as ${username}`;
+        accountStatus.textContent = `account created as ${username} and saved for quick sign in on this device`;
         return true;
       } catch (error) {
         console.error(error);
@@ -2322,22 +2314,14 @@
           return false;
         }
 
-        const boundRecord = await getBoundDeviceRecord();
-        if (boundRecord?.deviceId && boundRecord.deviceId !== state.auth.deviceId) {
-          state.auth.signedIn = false;
-          state.auth.sessionTicket = "";
-          state.auth.playFabId = "";
-          accountStatus.textContent = "this account is tied to a different device";
-          authStatusText.textContent = accountStatus.textContent;
-          return false;
-        }
-
-        if (!boundRecord?.deviceId) {
+        try {
           await linkCurrentDeviceToAccount();
+        } catch (linkError) {
+          console.error(linkError);
         }
 
         await finishAuth(loginData, username);
-        accountStatus.textContent = `logged in as ${username} on this device`;
+        accountStatus.textContent = `logged in as ${username}`;
         return true;
       } catch (error) {
         console.error(error);
