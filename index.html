@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Scraft</title>
+  <title>Shitcraft</title>
   <style>
     :root {
       --bg-top: #8b8b8b;
@@ -116,6 +116,95 @@
       gap: 12px;
     }
 
+    .world-menu-panel {
+      width: min(94vw, 760px);
+      padding: 24px 22px 20px;
+    }
+
+    .world-menu-copy {
+      margin: -6px 0 16px;
+      text-align: center;
+      color: #d9d9d9;
+      font-size: 0.82rem;
+      line-height: 1.35;
+    }
+
+    .world-create-box {
+      display: grid;
+      gap: 10px;
+      padding: 14px;
+      margin-bottom: 16px;
+      background: rgba(0, 0, 0, 0.28);
+      border: 2px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .world-field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: 10px;
+      align-items: end;
+    }
+
+    .world-field {
+      display: grid;
+      gap: 6px;
+    }
+
+    .world-field label {
+      font-size: 0.72rem;
+      color: #ececec;
+      letter-spacing: 0.03em;
+    }
+
+    .world-input {
+      width: 100%;
+      border: 2px solid rgba(255, 255, 255, 0.14);
+      background: rgba(16, 16, 16, 0.78);
+      color: #fff;
+      font: inherit;
+      padding: 10px 12px;
+      outline: none;
+    }
+
+    .world-create-btn {
+      width: auto;
+      min-width: 170px;
+      padding-inline: 18px;
+    }
+
+    .world-list-shell {
+      background: rgba(0, 0, 0, 0.28);
+      border: 2px solid rgba(255, 255, 255, 0.12);
+      padding: 12px;
+    }
+
+    .world-list-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+      color: #efefef;
+      font-size: 0.78rem;
+    }
+
+    .world-list {
+      gap: 10px;
+      max-height: min(44vh, 420px);
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .world-list-empty {
+      padding: 18px 12px;
+      text-align: center;
+      color: #d5d5d5;
+      font-size: 0.84rem;
+      line-height: 1.4;
+      border: 2px dashed rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
     .account-box {
       margin-bottom: 18px;
       padding: 12px;
@@ -132,9 +221,25 @@
 
     .account-row {
       display: grid;
-      grid-template-columns: 1fr auto;
+      grid-template-columns: 1fr;
       gap: 8px;
       align-items: center;
+    }
+
+    .account-mode-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .account-mode-btn {
+      padding: 10px 12px;
+      font-size: 0.88rem;
+    }
+
+    .account-mode-btn.active {
+      background: linear-gradient(180deg, var(--button-hover-top), var(--button-hover-bottom));
     }
 
     .account-input {
@@ -183,6 +288,12 @@
       transform: translateY(2px);
     }
 
+    .mc-button:disabled {
+      opacity: 0.58;
+      cursor: default;
+      filter: saturate(0.65);
+    }
+
     .secondary {
       background: linear-gradient(180deg, #7f7f7f, #4f4f4f);
     }
@@ -200,10 +311,19 @@
       padding: 14px;
       text-align: left;
       cursor: pointer;
+      transition: border-color 0.12s ease, transform 0.08s ease, background 0.12s ease;
     }
 
     .world-card:hover {
       border-color: rgba(255, 255, 255, 0.28);
+      background: rgba(24, 24, 24, 0.9);
+      transform: translateY(-1px);
+    }
+
+    .world-card.selected {
+      border-color: #f6f08d;
+      box-shadow: inset 0 0 0 2px rgba(246, 240, 141, 0.18);
+      background: rgba(34, 34, 22, 0.96);
     }
 
     .world-name {
@@ -215,6 +335,163 @@
       margin: 0;
       color: #d0d0d0;
       font-size: 0.92rem;
+    }
+
+    .world-seed {
+      margin-top: 6px;
+      color: #a9d7cb;
+      font-size: 0.72rem;
+      opacity: 0.95;
+    }
+
+    .world-action-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .world-action-row .mc-button {
+      padding: 12px 10px;
+      font-size: 0.92rem;
+    }
+
+    .world-inline-panel {
+      margin-top: 12px;
+      padding: 12px;
+      background: rgba(0, 0, 0, 0.24);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      display: grid;
+      gap: 10px;
+    }
+
+    .world-inline-copy {
+      text-align: center;
+      color: #dedede;
+      font-size: 0.78rem;
+      line-height: 1.35;
+    }
+
+    .world-inline-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .chat-layout {
+      display: grid;
+      grid-template-columns: minmax(260px, 290px) minmax(0, 1fr);
+      gap: 14px;
+      align-items: start;
+    }
+
+    .chat-side {
+      display: grid;
+      gap: 12px;
+    }
+
+    .chat-main {
+      display: grid;
+      gap: 12px;
+      min-height: 0;
+    }
+
+    .chat-add-box,
+    .chat-thread-shell {
+      display: grid;
+      gap: 10px;
+      padding: 14px;
+      background: rgba(0, 0, 0, 0.28);
+      border: 2px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .chat-add-row,
+    .chat-send-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: end;
+    }
+
+    .chat-thread-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.8rem;
+      color: #efefef;
+    }
+
+    .chat-thread-title {
+      margin: 0;
+      font-size: 1rem;
+      color: #fff;
+    }
+
+    .chat-thread-subtitle {
+      margin: 0;
+      font-size: 0.72rem;
+      color: #cfcfcf;
+    }
+
+    .chat-messages {
+      display: grid;
+      gap: 10px;
+      min-height: 300px;
+      max-height: min(45vh, 420px);
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .chat-message-empty {
+      padding: 18px 12px;
+      text-align: center;
+      color: #d5d5d5;
+      font-size: 0.82rem;
+      line-height: 1.4;
+      border: 2px dashed rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .chat-message {
+      display: grid;
+      gap: 6px;
+      padding: 10px 12px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 2px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .chat-message.own {
+      background: rgba(110, 152, 54, 0.12);
+      border-color: rgba(155, 214, 82, 0.24);
+    }
+
+    .chat-message-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 0.66rem;
+      color: #d3d3d3;
+    }
+
+    .chat-message-body {
+      white-space: pre-wrap;
+      word-break: break-word;
+      line-height: 1.4;
+      color: #fff;
+      font-size: 0.84rem;
+    }
+
+    .chat-panel-empty {
+      padding: 26px 18px;
+      text-align: center;
+      color: #d2d2d2;
+      line-height: 1.45;
+      border: 2px dashed rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.03);
+      min-height: 300px;
+      display: grid;
+      place-items: center;
     }
 
     .hidden {
@@ -262,8 +539,7 @@
 
     #gameShell.inventory-open #lookPad,
     #gameShell.inventory-open .joystick,
-    #gameShell.inventory-open .mobile-tip,
-    #gameShell.inventory-open .mobile-buttons {
+    #gameShell.inventory-open .mobile-tip {
       display: none;
     }
 
@@ -368,6 +644,16 @@
       border: 2px solid rgba(255, 255, 255, 0.12);
       padding: 10px;
       pointer-events: none;
+      position: relative;
+      z-index: 8;
+    }
+
+    .inventory-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      margin-bottom: 8px;
     }
 
     .inventory-top {
@@ -381,7 +667,7 @@
       background: rgba(0, 0, 0, 0.28);
       border: 2px solid rgba(255, 255, 255, 0.1);
       padding: 10px;
-      max-width: 240px;
+      max-width: 320px;
       align-self: center;
     }
 
@@ -418,6 +704,10 @@
       gap: 8px;
     }
 
+    .crafting-grid.workbench {
+      grid-template-columns: repeat(3, minmax(56px, 1fr));
+    }
+
     .craft-arrow {
       text-align: center;
       font-size: 1.3rem;
@@ -442,10 +732,26 @@
     }
 
     .inventory-label {
-      margin-bottom: 8px;
+      margin-bottom: 0;
       font-size: 0.82rem;
       color: #e5e5e5;
       text-align: center;
+    }
+
+    .inventory-close {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 36px;
+      min-width: 36px;
+      padding: 8px 0;
+      font-size: 0.9rem;
+      line-height: 1;
+    }
+
+    .desktop-only {
+      display: block;
     }
 
     .inventory-grid {
@@ -520,8 +826,8 @@
     .drag-ghost {
       position: fixed;
       z-index: 20;
-      width: 68px;
-      height: 68px;
+      width: 94px;
+      height: 94px;
       pointer-events: none;
       transform: translate(-50%, -50%);
       background: rgba(30, 30, 30, 0.94);
@@ -535,9 +841,31 @@
       overflow: hidden;
     }
 
-    .drag-ghost .slot-icon {
-      width: 36px;
-      height: 36px;
+    .drag-ghost canvas {
+      width: 100%;
+      height: 100%;
+      image-rendering: pixelated;
+    }
+
+    .held-item {
+      position: fixed;
+      right: 22px;
+      bottom: 96px;
+      z-index: 6;
+      width: 176px;
+      height: 176px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      filter: drop-shadow(4px 6px 0 rgba(0, 0, 0, 0.4));
+      transform-origin: bottom right;
+    }
+
+    .held-item canvas {
+      width: 100%;
+      height: 100%;
+      image-rendering: pixelated;
     }
 
     #mobileControls {
@@ -612,6 +940,7 @@
       padding: 8px 10px;
       font-size: 0.72rem;
       pointer-events: none;
+      display: none;
     }
 
     .physics-piece {
@@ -682,10 +1011,28 @@
       .top-left {
         font-size: 0.72rem;
       }
+
+      .chat-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .chat-messages,
+      .chat-panel-empty {
+        min-height: 220px;
+      }
+
+      .chat-add-row,
+      .chat-send-row {
+        grid-template-columns: 1fr;
+      }
     }
 
     body.mobile-device .mobile-only {
       display: block;
+    }
+
+    body.mobile-device .desktop-only {
+      display: none;
     }
   </style>
 </head>
@@ -697,23 +1044,26 @@
     <div class="crosshair"></div>
 
     <div class="hud top-left">
-      <div><b>controls</b> wasd move space jump mouse look</div>
-      <div>left click break right click place scroll or 1 to 0 change hotbar</div>
-      <div>press e for inventory and ` for the game menu</div>
-      <div class="mobile-only">mobile  left circle moves right side looks buttons jump break place inventory and menu</div>
+      <div class="desktop-only"><b>controls</b> wasd move space jump mouse look</div>
+      <div class="desktop-only">left click break right click place scroll or 1 to 0 change hotbar</div>
+      <div class="desktop-only">press e for inventory and ` for the game menu</div>
+      <div class="mobile-only"><b>controls</b> touch left circle to move drag right side to look tap hotbar to change slot use buttons for jump break place inventory and menu</div>
       <div class="status-bar" id="statusLine">loading world</div>
     </div>
 
     <div class="hud bottom-bar">
       <div class="inventory-wrap">
-        <div class="inventory-label">inventory</div>
+        <div class="inventory-header">
+          <div class="inventory-label">inventory</div>
+          <button class="mc-button inventory-close" id="closeInventoryBtn">x</button>
+        </div>
         <div class="inventory-top">
           <div>
             <div class="inventory-storage-title">storage</div>
             <div class="inventory-grid" id="inventoryGrid"></div>
           </div>
           <div class="crafting-panel">
-            <div class="crafting-title">crafting</div>
+            <div class="crafting-title" id="craftingTitle">crafting</div>
             <div class="crafting-layout">
               <div class="crafting-grid" id="craftingGrid"></div>
               <div class="craft-arrow">→</div>
@@ -727,13 +1077,35 @@
       </div>
       <div class="hotbar" id="hotbar"></div>
     </div>
+    <div id="heldItem" class="held-item hidden"></div>
 
     <div id="pauseMenu" class="overlay-menu hidden">
       <section class="panel">
         <h2 class="section-title">game menu</h2>
         <div class="menu">
           <button class="mc-button" id="resumeBtn">resume</button>
+          <button class="mc-button" id="pauseSettingsBtn">settings</button>
           <button class="mc-button secondary" id="mainMenuBtn">main menu</button>
+        </div>
+      </section>
+    </div>
+
+    <div id="settingsMenu" class="overlay-menu hidden">
+      <section class="panel">
+        <h2 class="section-title">settings</h2>
+        <div class="menu">
+          <button class="mc-button" id="optionMenuBtn">option</button>
+          <button class="mc-button secondary" id="closeSettingsBtn">back</button>
+        </div>
+      </section>
+    </div>
+
+    <div id="optionMenu" class="overlay-menu hidden">
+      <section class="panel">
+        <h2 class="section-title">option</h2>
+        <div class="menu">
+          <button class="mc-button" id="familyFriendlyBtn">family friendly mode off</button>
+          <button class="mc-button secondary" id="backToSettingsBtn">back</button>
         </div>
       </section>
     </div>
@@ -757,89 +1129,247 @@
   </div>
 
   <main class="screen">
-    <section id="mainMenu" class="panel">
+    <section id="authScreen" class="panel">
       <div class="logo-wrap">
         <h1 class="logo">shitcraft</h1>
         <p class="subtitle">shittityyy shit</p>
       </div>
 
       <div class="account-box">
-        <div class="account-title">integrated account username</div>
-        <div class="account-row">
-          <input id="usernameInput" class="account-input" type="text" maxlength="24" placeholder="enter username">
-          <button class="mc-button" id="setUsernameBtn" style="width:auto; padding:10px 14px;">set</button>
+        <div class="account-title" id="authTitle">please log in or create an account</div>
+        <div class="account-mode-row">
+          <button class="mc-button account-mode-btn active" id="loginModeBtn">log in</button>
+          <button class="mc-button account-mode-btn secondary" id="createModeBtn">create account</button>
         </div>
-        <div class="account-hint" id="accountStatus">this account binds to this device and cannot be renamed after setup</div>
+        <div class="account-row">
+          <input id="authUsernameInput" class="account-input" type="text" maxlength="20" placeholder="username">
+          <input id="authPasswordInput" class="account-input" type="password" maxlength="72" placeholder="password">
+          <button class="mc-button" id="authSubmitBtn">log in</button>
+        </div>
+        <div class="account-hint" id="accountStatus">this account will be tied to this device</div>
+      </div>
+
+      <p class="quit-note" id="authStatusText"></p>
+    </section>
+
+    <section id="mainMenu" class="panel hidden">
+      <div class="logo-wrap">
+        <h1 class="logo">shitcraft</h1>
+        <p class="subtitle">shittityyy shit</p>
       </div>
 
       <div class="menu">
         <button class="mc-button" id="singleplayerBtn">Singleplayer</button>
         <button class="mc-button" id="multiplayerBtn">Multiplayer</button>
+        <button class="mc-button" id="chatsBtn">Chats</button>
+        <button class="mc-button" id="mainSettingsBtn">Settings</button>
         <button class="mc-button secondary" id="quitBtn">Quit Game</button>
       </div>
 
       <p class="quit-note" id="statusText"></p>
     </section>
 
-    <section id="worldMenu" class="panel hidden">
-      <h2 class="section-title">select world</h2>
+    <section id="chatMenu" class="panel world-menu-panel hidden">
+      <h2 class="section-title">chats</h2>
+      <p class="world-menu-copy">start a chat with a player by username and your chats will stay on your account</p>
 
-      <div class="world-list">
-        <div class="world-card" data-world-slot="1">
-          <h3 class="world-name">empty slot 1</h3>
-          <p class="world-meta">new survival world</p>
+      <div class="chat-layout">
+        <div class="chat-side">
+          <div class="chat-add-box">
+            <div class="world-field">
+              <label for="chatUsernameInput">start a chat</label>
+              <div class="chat-add-row">
+                <input class="world-input" id="chatUsernameInput" type="text" maxlength="20" placeholder="player username">
+                <button class="mc-button world-create-btn" id="addChatBtn">add chat</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="world-list-shell">
+            <div class="world-list-head">
+              <span>your chats</span>
+              <span id="chatCountLabel">0 / 100</span>
+            </div>
+            <div class="world-list" id="chatList"></div>
+          </div>
         </div>
-        <div class="world-card" data-world-slot="2">
-          <h3 class="world-name">empty slot 2</h3>
-          <p class="world-meta">new survival world</p>
+
+        <div class="chat-main">
+          <div id="chatThreadEmpty" class="chat-panel-empty">select a chat to read messages or start a new one by username</div>
+
+          <div id="chatThreadPanel" class="chat-thread-shell hidden">
+            <div class="chat-thread-head">
+              <div>
+                <h3 class="chat-thread-title" id="chatThreadTitle">chat</h3>
+                <p class="chat-thread-subtitle" id="chatThreadSubtitle">messages</p>
+              </div>
+              <button class="mc-button secondary" id="refreshChatBtn">refresh</button>
+            </div>
+
+            <div class="chat-messages" id="chatMessages"></div>
+
+            <div class="world-field">
+              <label for="chatMessageInput">send message</label>
+              <div class="chat-send-row">
+                <input class="world-input" id="chatMessageInput" type="text" maxlength="280" placeholder="type a message">
+                <button class="mc-button" id="sendChatBtn">send</button>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="world-card" data-world-slot="3">
-          <h3 class="world-name">empty slot 3</h3>
-          <p class="world-meta">new survival world</p>
+      </div>
+
+      <button class="mc-button secondary" id="backFromChatsBtn">back to main menu</button>
+      <p class="footer-note" id="chatStatus">open chats to see your conversations</p>
+    </section>
+
+    <section id="worldMenu" class="panel world-menu-panel hidden">
+      <h2 class="section-title">select world</h2>
+      <p class="world-menu-copy">pick a saved world or make a new one with its own name and seed</p>
+
+      <div class="world-create-box">
+        <div class="world-field-row">
+          <div class="world-field">
+            <label for="worldNameInput">world name</label>
+            <input id="worldNameInput" class="world-input" type="text" maxlength="40" placeholder="new world">
+          </div>
+          <div class="world-field">
+            <label for="worldSeedInput">seed</label>
+            <input id="worldSeedInput" class="world-input" type="text" inputmode="numeric" maxlength="30" placeholder="leave blank for random">
+          </div>
+          <button class="mc-button world-create-btn" id="createWorldBtn">create world</button>
+        </div>
+      </div>
+
+      <div class="world-list-shell">
+        <div class="world-list-head">
+          <span>saved worlds</span>
+          <span id="worldCountLabel">0 / 100</span>
+        </div>
+        <div class="world-list" id="worldList"></div>
+        <div class="world-action-row">
+          <button class="mc-button" id="playWorldBtn" disabled>play</button>
+          <button class="mc-button secondary" id="renameWorldBtn" disabled>rename</button>
+          <button class="mc-button secondary" id="deleteWorldBtn" disabled>delete</button>
+        </div>
+        <div class="world-inline-panel hidden" id="worldRenamePanel">
+          <div class="world-inline-copy">enter a new world name</div>
+          <input id="renameWorldInput" class="world-input" type="text" maxlength="40" placeholder="world name">
+          <div class="world-inline-actions">
+            <button class="mc-button" id="saveRenameWorldBtn">save name</button>
+            <button class="mc-button secondary" id="cancelRenameWorldBtn">cancel</button>
+          </div>
+        </div>
+        <div class="world-inline-panel hidden" id="worldDeletePanel">
+          <div class="world-inline-copy" id="deleteWorldCopy">delete this world</div>
+          <div class="world-inline-actions">
+            <button class="mc-button secondary" id="confirmDeleteWorldBtn">delete world</button>
+            <button class="mc-button" id="cancelDeleteWorldBtn">keep world</button>
+          </div>
         </div>
       </div>
 
       <div class="menu" style="margin-top: 16px;">
-        <button class="mc-button" id="createWorldBtn">create new world</button>
         <button class="mc-button secondary" id="backBtn">back to main menu</button>
       </div>
 
-      <p class="footer-note" id="worldStatus">choose a slot to get started</p>
+      <p class="footer-note" id="worldStatus">create a world or pick one from your account</p>
     </section>
   </main>
 
   <script type="module">
     import * as THREE from "https://unpkg.com/three@0.164.1/build/three.module.js";
 
+    const authScreen = document.getElementById("authScreen");
     const mainMenu = document.getElementById("mainMenu");
+    const authStatusText = document.getElementById("authStatusText");
     const worldMenu = document.getElementById("worldMenu");
+    const chatMenu = document.getElementById("chatMenu");
+    const settingsMenu = document.getElementById("settingsMenu");
+    const optionMenu = document.getElementById("optionMenu");
     const statusText = document.getElementById("statusText");
     const worldStatus = document.getElementById("worldStatus");
-    const usernameInput = document.getElementById("usernameInput");
-    const setUsernameBtn = document.getElementById("setUsernameBtn");
+    const chatStatus = document.getElementById("chatStatus");
+    const worldListEl = document.getElementById("worldList");
+    const chatListEl = document.getElementById("chatList");
+    const worldCountLabel = document.getElementById("worldCountLabel");
+    const chatCountLabel = document.getElementById("chatCountLabel");
+    const worldNameInput = document.getElementById("worldNameInput");
+    const worldSeedInput = document.getElementById("worldSeedInput");
+    const chatUsernameInput = document.getElementById("chatUsernameInput");
+    const chatMessageInput = document.getElementById("chatMessageInput");
+    const playWorldBtn = document.getElementById("playWorldBtn");
+    const renameWorldBtn = document.getElementById("renameWorldBtn");
+    const deleteWorldBtn = document.getElementById("deleteWorldBtn");
+    const addChatBtn = document.getElementById("addChatBtn");
+    const sendChatBtn = document.getElementById("sendChatBtn");
+    const refreshChatBtn = document.getElementById("refreshChatBtn");
+    const backFromChatsBtn = document.getElementById("backFromChatsBtn");
+    const chatThreadEmpty = document.getElementById("chatThreadEmpty");
+    const chatThreadPanel = document.getElementById("chatThreadPanel");
+    const chatThreadTitle = document.getElementById("chatThreadTitle");
+    const chatThreadSubtitle = document.getElementById("chatThreadSubtitle");
+    const chatMessagesEl = document.getElementById("chatMessages");
+    const worldRenamePanel = document.getElementById("worldRenamePanel");
+    const renameWorldInput = document.getElementById("renameWorldInput");
+    const saveRenameWorldBtn = document.getElementById("saveRenameWorldBtn");
+    const cancelRenameWorldBtn = document.getElementById("cancelRenameWorldBtn");
+    const worldDeletePanel = document.getElementById("worldDeletePanel");
+    const deleteWorldCopy = document.getElementById("deleteWorldCopy");
+    const confirmDeleteWorldBtn = document.getElementById("confirmDeleteWorldBtn");
+    const cancelDeleteWorldBtn = document.getElementById("cancelDeleteWorldBtn");
+    const authTitle = document.getElementById("authTitle");
+    const loginModeBtn = document.getElementById("loginModeBtn");
+    const createModeBtn = document.getElementById("createModeBtn");
+    const authUsernameInput = document.getElementById("authUsernameInput");
+    const authPasswordInput = document.getElementById("authPasswordInput");
+    const authSubmitBtn = document.getElementById("authSubmitBtn");
     const accountStatus = document.getElementById("accountStatus");
     const gameShell = document.getElementById("gameShell");
     const canvas = document.getElementById("gameView");
     const hotbarEl = document.getElementById("hotbar");
     const inventoryGridEl = document.getElementById("inventoryGrid");
     const craftingGridEl = document.getElementById("craftingGrid");
+    const craftingTitleEl = document.getElementById("craftingTitle");
     const craftResultSlotEl = document.getElementById("craftResultSlot");
+    const heldItemEl = document.getElementById("heldItem");
     const statusLine = document.getElementById("statusLine");
     const screen = document.querySelector(".screen");
     const bottomBar = document.querySelector(".bottom-bar");
     const pauseMenu = document.getElementById("pauseMenu");
+    const pauseSettingsBtn = document.getElementById("pauseSettingsBtn");
+    const mainSettingsBtn = document.getElementById("mainSettingsBtn");
+    const optionMenuBtn = document.getElementById("optionMenuBtn");
+    const closeSettingsBtn = document.getElementById("closeSettingsBtn");
+    const backToSettingsBtn = document.getElementById("backToSettingsBtn");
+    const familyFriendlyBtn = document.getElementById("familyFriendlyBtn");
     const dragGhost = document.getElementById("dragGhost");
     const mobileControls = document.getElementById("mobileControls");
+    const closeInventoryBtn = document.getElementById("closeInventoryBtn");
     const moveStick = document.getElementById("moveStick");
     const moveKnob = document.getElementById("moveKnob");
     const lookPad = document.getElementById("lookPad");
-    const worldCards = Array.from(document.querySelectorAll("[data-world-slot]"));
+    const singleplayerBtn = document.getElementById("singleplayerBtn");
+    const multiplayerBtn = document.getElementById("multiplayerBtn");
+    const chatsBtn = document.getElementById("chatsBtn");
     const isMobileDevice = /android|iphone|ipad|ipod|windows phone/i.test(navigator.userAgent);
     const PLAYFAB_TITLE_ID = "159D4A";
-    const PLAYFAB_KEY_PREFIX = "shitcraft_world_slot_";
-    const PLAYFAB_META_KEY = "shitcraft_world_meta";
+    const PLAYFAB_WORLD_KEY_PREFIX = "shitcraft_world_";
+    const PLAYFAB_WORLDS_INDEX_KEY = "shitcraft_world_index";
+    const PLAYFAB_LEGACY_META_KEY = "shitcraft_world_meta";
+    const PLAYFAB_DEVICE_BINDING_KEY = "shitcraft_device_binding";
+    const PLAYFAB_SETTINGS_KEY = "shitcraft_player_settings";
+    const PLAYFAB_CHAT_LIST_FUNCTION = "getChats";
+    const PLAYFAB_CHAT_START_FUNCTION = "startChat";
+    const PLAYFAB_CHAT_MESSAGES_FUNCTION = "getChatMessages";
+    const PLAYFAB_CHAT_SEND_FUNCTION = "sendChatMessage";
     const ACCOUNT_DEVICE_KEY = "shitcraft_integrated_account_device_id";
-    const ACCOUNT_USERNAME_KEY = "shitcraft_integrated_account_username";
+    const ACCOUNT_LAST_USERNAME_KEY = "shitcraft_last_username";
+    const FAMILY_FRIENDLY_KEY = "shitcraft_family_friendly_mode";
+    const MAX_WORLD_COUNT = 100;
+    const MAX_CHAT_COUNT = 100;
+    const logoEls = Array.from(document.querySelectorAll(".logo"));
+    const subtitleEls = Array.from(document.querySelectorAll(".subtitle"));
 
     const BLOCK = {
       AIR: 0,
@@ -850,7 +1380,11 @@
       OAK_LOG: 5,
       LEAVES: 6,
       OAK_PLANKS: 7,
-      CRAFTING_TABLE: 8
+      CRAFTING_TABLE: 8,
+      COBBLESTONE: 9,
+      STICK: 10,
+      WOOD_PICKAXE: 11,
+      STONE_PICKAXE: 12
     };
 
     const BLOCK_INFO = {
@@ -861,7 +1395,11 @@
       [BLOCK.OAK_LOG]: { name: "oak log", hardness: 0.9, placeable: true },
       [BLOCK.LEAVES]: { name: "leaves", hardness: 0.35, placeable: true },
       [BLOCK.OAK_PLANKS]: { name: "oak planks", hardness: 0.8, placeable: true },
-      [BLOCK.CRAFTING_TABLE]: { name: "crafting table", hardness: 1.0, placeable: true }
+      [BLOCK.CRAFTING_TABLE]: { name: "crafting table", hardness: 1.0, placeable: true },
+      [BLOCK.COBBLESTONE]: { name: "cobblestone", hardness: 1.1, placeable: true },
+      [BLOCK.STICK]: { name: "stick", hardness: 0, placeable: false },
+      [BLOCK.WOOD_PICKAXE]: { name: "wood pickaxe", hardness: 0, placeable: false, toolType: "pickaxe", toolTier: 1 },
+      [BLOCK.STONE_PICKAXE]: { name: "stone pickaxe", hardness: 0, placeable: false, toolType: "pickaxe", toolTier: 2 }
     };
 
     const FACE_DATA = [
@@ -876,6 +1414,9 @@
     const CHUNK_SIZE = 16;
     const WORLD_HEIGHT = 48;
     const RENDER_DISTANCE = 1;
+    const DAY_DURATION = 15 * 60;
+    const NIGHT_DURATION = 5 * 60;
+    const FULL_DAY_DURATION = DAY_DURATION + NIGHT_DURATION;
     const PLAYER_RADIUS = 0.33;
     const PLAYER_HEIGHT = 1.8;
     const EYE_HEIGHT = 1.62;
@@ -905,35 +1446,50 @@
         jumpHeld: false,
         movePointerId: null,
         lookPointerId: null,
+        lookStartX: 0,
+        lookStartY: 0,
         lastLookX: 0,
-        lastLookY: 0
+        lastLookY: 0,
+        lookMoved: false
       },
       auth: {
+        mode: "login",
         username: "",
         customId: "",
         deviceId: "",
         playFabId: "",
         sessionTicket: "",
         signedIn: false,
-        signingIn: false,
-        boundToDevice: false
+        signingIn: false
       },
       saveTimer: null,
       lastSavedAt: 0,
-      worldMeta: {
-        1: null,
-        2: null,
-        3: null
-      },
-      worldSlot: 1,
+      familyFriendlyMode: false,
+      settingsOrigin: "main",
+      dayTime: 0,
+      worldList: [],
+      chatList: [],
+      chatMessages: [],
+      selectedChatId: "",
+      selectedWorldId: "",
+      worldActionMode: "",
+      currentWorldId: "",
+      currentWorldName: "",
+      currentWorldSeed: "",
+      currentSeedHash: 0,
+      currentWorldCreatedAt: "",
+      spawnLoadedFromSave: false,
+      craftingMode: "inventory",
       selectedSlot: 0,
       slots: Array.from({ length: 40 }, () => ({ id: BLOCK.AIR, count: 0 })),
-      craftingSlots: Array.from({ length: 4 }, () => ({ id: BLOCK.AIR, count: 0 })),
+      inventoryCraftingSlots: Array.from({ length: 4 }, () => ({ id: BLOCK.AIR, count: 0 })),
+      tableCraftingSlots: Array.from({ length: 9 }, () => ({ id: BLOCK.AIR, count: 0 })),
       craftResult: { id: BLOCK.AIR, count: 0, recipe: "none" },
       keys: new Set(),
       chunks: new Map(),
       dirtyChunks: new Set(),
       changes: new Map(),
+      droppedItems: [],
       heightCache: new Map(),
       raycastTargets: [],
       target: null,
@@ -970,21 +1526,44 @@
     let blockMaterial;
     let lastPointerMoveAt = 0;
     let sunDirection;
+    let hemiLight;
+    let sunLight;
+    let sunSprite;
+    let moonSprite;
+    let heldPreview;
+    let dragPreview;
     let lastStatusUpdateAt = 0;
     let lastStatusText = "";
     const tempForward = new THREE.Vector3();
     const tempRight = new THREE.Vector3();
     const tempUp = new THREE.Vector3(0, 1, 0);
+    const tempColor = new THREE.Color();
+    const tileTextureCache = new Map();
+    const tileCanvasCache = new Map();
+
+    document.body.appendChild(settingsMenu);
+    document.body.appendChild(optionMenu);
 
     if (isMobileDevice) {
       document.body.classList.add("mobile-device");
     }
 
+    state.familyFriendlyMode = localStorage.getItem(FAMILY_FRIENDLY_KEY) === "1";
+    applyFamilyFriendlyMode();
     initializeAccountUi();
+    tryAutoLogin();
 
-    document.getElementById("singleplayerBtn").addEventListener("click", () => {
+    document.getElementById("singleplayerBtn").addEventListener("click", async () => {
+      worldStatus.textContent = "loading account";
+      const ready = await ensureSignedIn();
+      if (!ready) {
+        worldStatus.textContent = "sign in failed";
+        return;
+      }
+      await loadWorldIndex();
       mainMenu.classList.add("hidden");
       worldMenu.classList.remove("hidden");
+      worldStatus.textContent = "create a world or pick one from your account";
       statusText.textContent = "";
     });
 
@@ -992,10 +1571,28 @@
       statusText.textContent = "multiplayer is not available right now the servers are broke";
     });
 
+    chatsBtn.addEventListener("click", async () => {
+      const ready = await ensureSignedIn();
+      if (!ready) {
+        return;
+      }
+      await openChatMenu();
+    });
+
+    mainSettingsBtn.addEventListener("click", () => {
+      openSettingsMenu("main");
+    });
+
     document.getElementById("backBtn").addEventListener("click", () => {
       worldMenu.classList.add("hidden");
       mainMenu.classList.remove("hidden");
-      worldStatus.textContent = "choose a slot to get started";
+      worldStatus.textContent = "create a world or pick one from your account";
+    });
+
+    backFromChatsBtn.addEventListener("click", () => {
+      chatMenu.classList.add("hidden");
+      mainMenu.classList.remove("hidden");
+      chatStatus.textContent = "back at the main menu";
     });
 
     document.getElementById("createWorldBtn").addEventListener("click", async () => {
@@ -1003,14 +1600,61 @@
       if (!ready) {
         return;
       }
-      await loadWorldMeta();
-      startGame(getFirstEmptyWorldSlot());
+      await loadWorldIndex();
+
+      if (state.worldList.length >= MAX_WORLD_COUNT) {
+        worldStatus.textContent = "you already have 100 worlds in your queue";
+        return;
+      }
+
+      const worldSeed = sanitizeWorldSeed(worldSeedInput.value) || generateRandomSeed();
+      const worldMeta = {
+        worldId: createWorldId(),
+        name: sanitizeWorldName(worldNameInput.value),
+        seed: worldSeed,
+        createdAt: new Date().toISOString(),
+        lastSavedAt: "",
+        storageKey: ""
+      };
+
+      state.worldList = sortWorldList([worldMeta, ...state.worldList]).slice(0, MAX_WORLD_COUNT);
+      state.selectedWorldId = worldMeta.worldId;
+      renderWorldList();
+      const indexed = await saveWorldIndexOnly();
+      if (!indexed) {
+        worldStatus.textContent = "could not create the world in playfab";
+        return;
+      }
+      worldNameInput.value = "";
+      worldSeedInput.value = "";
+      worldStatus.textContent = `created ${worldMeta.name}`;
+      startGame(worldMeta.worldId);
     });
 
-    document.querySelectorAll("[data-world-slot]").forEach((card) => {
-      card.addEventListener("click", () => {
-        startGame(Number(card.dataset.worldSlot || 1));
+    [chatUsernameInput, chatMessageInput].forEach((input) => {
+      input.addEventListener("keydown", async (event) => {
+        if (event.key !== "Enter" || event.shiftKey) {
+          return;
+        }
+        event.preventDefault();
+        if (input === chatUsernameInput) {
+          await startChatWithUsername();
+        } else {
+          await sendCurrentChatMessage();
+        }
       });
+    });
+
+    addChatBtn.addEventListener("click", async () => {
+      await startChatWithUsername();
+    });
+
+    refreshChatBtn.addEventListener("click", async () => {
+      await refreshSelectedChat();
+    });
+
+    sendChatBtn.addEventListener("click", async () => {
+      await sendCurrentChatMessage();
     });
 
     document.getElementById("quitBtn").addEventListener("click", () => {
@@ -1027,29 +1671,170 @@
       setPaused(false);
     });
 
+    pauseSettingsBtn.addEventListener("click", () => {
+      pauseMenu.classList.add("hidden");
+      openSettingsMenu("pause");
+    });
+
     document.getElementById("mainMenuBtn").addEventListener("click", () => {
       leaveToMainMenu();
     });
 
-    setUsernameBtn.addEventListener("click", async () => {
-      await applyUsernameFromInput();
+    optionMenuBtn.addEventListener("click", () => {
+      settingsMenu.classList.add("hidden");
+      optionMenu.classList.remove("hidden");
+      refreshFamilyFriendlyButton();
     });
 
-    usernameInput.addEventListener("keydown", async (event) => {
-      if (event.key === "Enter") {
-        event.preventDefault();
-        await applyUsernameFromInput();
+    closeSettingsBtn.addEventListener("click", () => {
+      closeSettingsMenus();
+    });
+
+    backToSettingsBtn.addEventListener("click", () => {
+      optionMenu.classList.add("hidden");
+      settingsMenu.classList.remove("hidden");
+    });
+
+    familyFriendlyBtn.addEventListener("click", async () => {
+      state.familyFriendlyMode = !state.familyFriendlyMode;
+      localStorage.setItem(FAMILY_FRIENDLY_KEY, state.familyFriendlyMode ? "1" : "0");
+      applyFamilyFriendlyMode();
+      refreshFamilyFriendlyButton();
+      await savePlayerSettings();
+    });
+
+    closeInventoryBtn.addEventListener("pointerdown", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      setInventoryOpen(false);
+    });
+
+    playWorldBtn.addEventListener("click", () => {
+      if (!state.selectedWorldId) {
+        return;
+      }
+      startGame(state.selectedWorldId);
+    });
+
+    renameWorldBtn.addEventListener("click", () => {
+      const world = getSelectedWorldMeta();
+      if (!world) {
+        return;
+      }
+      state.worldActionMode = "rename";
+      renameWorldInput.value = world.name;
+      renderWorldActionPanels();
+    });
+
+    deleteWorldBtn.addEventListener("click", () => {
+      const world = getSelectedWorldMeta();
+      if (!world) {
+        return;
+      }
+      state.worldActionMode = "delete";
+      renderWorldActionPanels();
+    });
+
+    saveRenameWorldBtn.addEventListener("click", async () => {
+      const world = getSelectedWorldMeta();
+      if (!world) {
+        return;
+      }
+
+      const nextName = sanitizeWorldName(renameWorldInput.value);
+      if (!nextName || nextName === world.name) {
+        state.worldActionMode = "";
+        renderWorldActionPanels();
+        return;
+      }
+
+      world.name = nextName;
+      state.worldList = sortWorldList([...state.worldList]);
+      state.worldActionMode = "";
+      renderWorldList();
+      const saved = await saveWorldIndexOnly();
+      worldStatus.textContent = saved ? `renamed to ${nextName}` : "could not rename world";
+    });
+
+    cancelRenameWorldBtn.addEventListener("click", () => {
+      state.worldActionMode = "";
+      renderWorldActionPanels();
+    });
+
+    confirmDeleteWorldBtn.addEventListener("click", async () => {
+      const world = getSelectedWorldMeta();
+      if (!world) {
+        return;
+      }
+
+      state.worldList = state.worldList.filter((entry) => entry.worldId !== world.worldId);
+      if (state.selectedWorldId === world.worldId) {
+        state.selectedWorldId = "";
+      }
+      state.worldActionMode = "";
+      renderWorldList();
+      const saved = await saveWorldIndexOnly();
+      worldStatus.textContent = saved ? `${world.name} deleted` : "could not delete world";
+    });
+
+    cancelDeleteWorldBtn.addEventListener("click", () => {
+      state.worldActionMode = "";
+      renderWorldActionPanels();
+    });
+
+    loginModeBtn.addEventListener("click", () => {
+      setAuthMode("login");
+    });
+
+    createModeBtn.addEventListener("click", () => {
+      setAuthMode("create");
+    });
+
+    authSubmitBtn.addEventListener("click", async () => {
+      if (state.auth.mode === "create") {
+        await createAccount();
+      } else {
+        await loginAccount();
       }
     });
 
-    async function startGame(slot) {
+    [authUsernameInput, authPasswordInput].forEach((input) => {
+      input.addEventListener("keydown", async (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          if (state.auth.mode === "create") {
+            await createAccount();
+          } else {
+            await loginAccount();
+          }
+        }
+      });
+    });
+
+    [worldNameInput, worldSeedInput].forEach((input) => {
+      input.addEventListener("keydown", async (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          document.getElementById("createWorldBtn").click();
+        }
+      });
+    });
+
+    async function startGame(worldId) {
       const ready = await ensureSignedIn();
       if (!ready) {
         return;
       }
 
-      state.worldSlot = slot;
-      worldStatus.textContent = `starting world slot ${slot}`;
+      await loadWorldIndex();
+      const worldMeta = state.worldList.find((entry) => entry.worldId === worldId);
+      if (!worldMeta) {
+        worldStatus.textContent = "that world could not be found";
+        return;
+      }
+
+      applyCurrentWorldMeta(worldMeta);
+      worldStatus.textContent = `starting ${worldMeta.name}`;
       mainMenu.classList.add("hidden");
       worldMenu.classList.add("hidden");
       screen.classList.add("hidden");
@@ -1061,13 +1846,15 @@
       }
 
       clearWorldState();
-      await loadWorldMeta();
-      await loadWorldState(slot);
+      resetInventoryState();
+      const loaded = await loadWorldState(worldMeta);
       state.started = true;
       state.paused = false;
       setInventoryOpen(false);
       lastPointerMoveAt = performance.now();
-      setSpawnPoint();
+      if (!loaded || !state.spawnLoadedFromSave) {
+        setSpawnPoint();
+      }
       refreshChunksAroundPlayer(true);
       updateInventoryUi();
       updateStatusLine();
@@ -1095,12 +1882,21 @@
       worldGroup = new THREE.Group();
       scene.add(worldGroup);
 
-      const hemi = new THREE.HemisphereLight(0xc7dce5, 0x454240, 1.2);
-      scene.add(hemi);
+      hemiLight = new THREE.HemisphereLight(0xc7dce5, 0x454240, 1.2);
+      scene.add(hemiLight);
 
-      const sun = new THREE.DirectionalLight(0xffffff, 1.1);
-      sun.position.set(18, 30, 12);
-      scene.add(sun);
+      sunLight = new THREE.DirectionalLight(0xffffff, 1.1);
+      sunLight.position.set(18, 30, 12);
+      scene.add(sunLight);
+      sunSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: createCelestialTexture("sun"), transparent: true, depthWrite: false }));
+      sunSprite.scale.set(8, 8, 1);
+      scene.add(sunSprite);
+      moonSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: createCelestialTexture("moon"), transparent: true, depthWrite: false }));
+      moonSprite.scale.set(7, 7, 1);
+      scene.add(moonSprite);
+      updateDayNight(0);
+      heldPreview = createItemPreview(heldItemEl, 176, 176, "held");
+      dragPreview = createItemPreview(dragGhost, 94, 94, "drag");
 
       selectionBox = new THREE.LineSegments(
         new THREE.EdgesGeometry(new THREE.BoxGeometry(1.02, 1.02, 1.02)),
@@ -1132,11 +1928,12 @@
       document.addEventListener("mousemove", onMouseMove);
       document.addEventListener("pointermove", onUiPointerMove);
       document.addEventListener("pointerdown", onGlobalPointerDown);
+      document.addEventListener("mousedown", onGlobalMouseDown);
       document.addEventListener("mousedown", onMouseDown);
       document.addEventListener("mouseup", onMouseUp);
       document.addEventListener("pointerup", onUiPointerUp);
       document.addEventListener("pointercancel", onUiPointerCancel);
-      document.addEventListener("contextmenu", (event) => event.preventDefault());
+      document.addEventListener("contextmenu", onGlobalContextMenu);
       document.addEventListener("wheel", onWheel, { passive: false });
       document.addEventListener("pointerlockchange", () => {
         lastPointerMoveAt = performance.now();
@@ -1157,58 +1954,6 @@
       animate();
     }
 
-    function initializeAccountUi() {
-      const savedDeviceId = localStorage.getItem(ACCOUNT_DEVICE_KEY) || "";
-      const savedUsername = localStorage.getItem(ACCOUNT_USERNAME_KEY) || "";
-
-      if (savedDeviceId && savedUsername) {
-        state.auth.deviceId = savedDeviceId;
-        state.auth.username = savedUsername;
-        state.auth.customId = makeCustomId(savedDeviceId);
-        state.auth.boundToDevice = true;
-        usernameInput.value = savedUsername;
-        usernameInput.readOnly = true;
-        setUsernameBtn.disabled = true;
-        accountStatus.textContent = `integrated account ${savedUsername} is bound to this device`;
-        return;
-      }
-
-      accountStatus.textContent = "choose a username to bind your integrated account to this device";
-    }
-
-    async function applyUsernameFromInput() {
-      if (state.auth.boundToDevice) {
-        accountStatus.textContent = `this device is locked to ${state.auth.username}`;
-        return true;
-      }
-
-      const username = sanitizeUsername(usernameInput.value);
-      if (!username) {
-        accountStatus.textContent = "enter a username first";
-        return false;
-      }
-
-      const deviceId = createDeviceId();
-      usernameInput.value = username;
-      state.auth.username = username;
-      state.auth.deviceId = deviceId;
-      state.auth.customId = makeCustomId(deviceId);
-      state.auth.boundToDevice = true;
-      localStorage.setItem(ACCOUNT_DEVICE_KEY, deviceId);
-      localStorage.setItem(ACCOUNT_USERNAME_KEY, username);
-      usernameInput.readOnly = true;
-      setUsernameBtn.disabled = true;
-      accountStatus.textContent = `integrated account ${username} is now bound to this device`;
-      return true;
-    }
-
-    function sanitizeUsername(value) {
-      return (value || "")
-        .trim()
-        .replace(/[^a-zA-Z0-9 _-]/g, "")
-        .slice(0, 24);
-    }
-
     function createDeviceId() {
       if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
         return crypto.randomUUID();
@@ -1217,57 +1962,500 @@
       return `device_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
     }
 
+    function getOrCreateDeviceId() {
+      let deviceId = localStorage.getItem(ACCOUNT_DEVICE_KEY) || "";
+      if (!deviceId) {
+        deviceId = createDeviceId();
+        localStorage.setItem(ACCOUNT_DEVICE_KEY, deviceId);
+      }
+      return deviceId;
+    }
+
     function makeCustomId(deviceId) {
       return `shitcraft_device_${String(deviceId).toLowerCase().replace(/[^a-z0-9_-]/g, "")}`;
     }
 
-    async function ensureSignedIn() {
-      if (!state.auth.username) {
-        const ok = await applyUsernameFromInput();
-        if (!ok) {
-          statusText.textContent = "set a username before you start";
-          return false;
+    function sanitizeAuthUsername(value) {
+      const cleaned = (value || "")
+        .trim()
+        .replace(/[^a-zA-Z0-9_-]/g, "")
+        .slice(0, 20);
+      return cleaned.length >= 3 ? cleaned : "";
+    }
+
+    function sanitizePassword(value) {
+      const trimmed = String(value || "").trim();
+      return trimmed.length >= 6 ? trimmed.slice(0, 72) : "";
+    }
+
+    function getInternalEmail(username, deviceId) {
+      const safeDevice = String(deviceId || "").toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 22) || "device";
+      const nonce = `${Date.now()}${Math.random().toString(36).slice(2, 8)}`;
+      return `${safeDevice}.${nonce}@shitcraft.local`;
+    }
+
+    function setAuthMode(mode) {
+      state.auth.mode = mode === "create" ? "create" : "login";
+      renderAuthUi();
+    }
+
+    function applyFamilyFriendlyMode() {
+      const logoText = state.familyFriendlyMode ? "scraft" : "shitcraft";
+      const subtitleText = state.familyFriendlyMode ? "Scrafty Wafty" : "shittityyy shit";
+      logoEls.forEach((el) => {
+        el.textContent = logoText;
+      });
+      subtitleEls.forEach((el) => {
+        el.textContent = subtitleText;
+      });
+      refreshFamilyFriendlyButton();
+    }
+
+    function refreshFamilyFriendlyButton() {
+      if (!familyFriendlyBtn) {
+        return;
+      }
+      familyFriendlyBtn.textContent = state.familyFriendlyMode
+        ? "family friendly mode on"
+        : "family friendly mode off";
+    }
+
+    async function loadPlayerSettings() {
+      if (!state.auth.signedIn) {
+        return;
+      }
+
+      try {
+        const result = await playFabCall("Client/GetUserData", {
+          Keys: [PLAYFAB_SETTINGS_KEY]
+        }, true);
+        const record = result?.data?.Data?.[PLAYFAB_SETTINGS_KEY]?.Value;
+        if (!record) {
+          return;
         }
-      }
 
-      if (state.auth.signedIn && state.auth.sessionTicket) {
-        await loadWorldMeta();
-        return true;
+        const parsed = JSON.parse(record);
+        if (typeof parsed?.familyFriendlyMode === "boolean") {
+          state.familyFriendlyMode = parsed.familyFriendlyMode;
+          localStorage.setItem(FAMILY_FRIENDLY_KEY, state.familyFriendlyMode ? "1" : "0");
+          applyFamilyFriendlyMode();
+        }
+      } catch (error) {
+        console.error(error);
       }
+    }
 
-      if (state.auth.signingIn) {
+    async function savePlayerSettings() {
+      if (!state.auth.signedIn) {
         return false;
       }
 
+      try {
+        await playFabCall("Client/UpdateUserData", {
+          Data: {
+            [PLAYFAB_SETTINGS_KEY]: JSON.stringify({
+              familyFriendlyMode: state.familyFriendlyMode
+            })
+          },
+          Permission: "Private"
+        }, true);
+        return true;
+      } catch (error) {
+        console.error(error);
+        return false;
+      }
+    }
+
+    function openSettingsMenu(origin = "main") {
+      state.settingsOrigin = origin === "pause" ? "pause" : "main";
+      if (state.settingsOrigin === "main") {
+        mainMenu.classList.add("hidden");
+        worldMenu.classList.add("hidden");
+        chatMenu.classList.add("hidden");
+      }
+      settingsMenu.classList.remove("hidden");
+      optionMenu.classList.add("hidden");
+      refreshFamilyFriendlyButton();
+    }
+
+    function closeSettingsMenus() {
+      settingsMenu.classList.add("hidden");
+      optionMenu.classList.add("hidden");
+      if (state.settingsOrigin === "pause" && state.started && state.paused) {
+        pauseMenu.classList.remove("hidden");
+      } else if (state.settingsOrigin === "main") {
+        mainMenu.classList.remove("hidden");
+      }
+    }
+
+    function updateMenuAvailability() {
+      singleplayerBtn.disabled = !state.auth.signedIn;
+      chatsBtn.disabled = !state.auth.signedIn;
+    }
+
+    function showAuthScreen() {
+      authScreen.classList.remove("hidden");
+      mainMenu.classList.add("hidden");
+      worldMenu.classList.add("hidden");
+      chatMenu.classList.add("hidden");
+      closeSettingsMenus();
+      screen.classList.remove("hidden");
+      gameShell.classList.add("hidden");
+    }
+
+    function showMainMenu() {
+      authScreen.classList.add("hidden");
+      mainMenu.classList.remove("hidden");
+      worldMenu.classList.add("hidden");
+      chatMenu.classList.add("hidden");
+      closeSettingsMenus();
+      screen.classList.remove("hidden");
+    }
+
+    function renderAuthUi() {
+      const signing = state.auth.signingIn;
+      const signedIn = state.auth.signedIn;
+      const creating = state.auth.mode === "create";
+
+      authTitle.textContent = signedIn
+        ? `signed in as ${state.auth.username}`
+        : "please log in or create an account";
+      loginModeBtn.classList.toggle("active", !creating);
+      createModeBtn.classList.toggle("active", creating);
+      authSubmitBtn.textContent = signedIn ? "signed in" : (creating ? "create account" : "log in");
+      authUsernameInput.placeholder = "username";
+      authPasswordInput.placeholder = creating ? "new password" : "password";
+
+      loginModeBtn.disabled = signing || signedIn;
+      createModeBtn.disabled = signing || signedIn;
+      authUsernameInput.disabled = signing || signedIn;
+      authPasswordInput.disabled = signing || signedIn;
+      authSubmitBtn.disabled = signing || signedIn;
+      authUsernameInput.readOnly = signedIn;
+      authPasswordInput.readOnly = signedIn;
+      updateMenuAvailability();
+    }
+
+    function initializeAccountUi() {
+      state.auth.deviceId = getOrCreateDeviceId();
+      state.auth.customId = makeCustomId(state.auth.deviceId);
+      authUsernameInput.value = localStorage.getItem(ACCOUNT_LAST_USERNAME_KEY) || "";
+      accountStatus.textContent = "log in or create an account this account will be tied to this device";
+      authStatusText.textContent = "";
+      showAuthScreen();
+      renderAuthUi();
+    }
+
+    async function tryAutoLogin() {
       state.auth.signingIn = true;
-      accountStatus.textContent = `signing into integrated account ${state.auth.username}`;
+      accountStatus.textContent = "checking saved device sign in";
+      authStatusText.textContent = "";
+      renderAuthUi();
 
       try {
         const result = await playFabCall("Client/LoginWithCustomID", {
           TitleId: PLAYFAB_TITLE_ID,
           CustomId: state.auth.customId,
-          CreateAccount: true
+          CreateAccount: false
         });
 
-        const login = result?.data;
-        state.auth.playFabId = login?.PlayFabId || "";
-        state.auth.sessionTicket = login?.SessionTicket || "";
-        state.auth.signedIn = Boolean(state.auth.sessionTicket);
-        accountStatus.textContent = state.auth.signedIn
-          ? `signed into integrated account ${state.auth.username}`
-          : "could not sign in";
-        if (state.auth.signedIn) {
-          await loadWorldMeta();
+        const ok = await finishAuth(result?.data, "");
+        if (!ok) {
+          return false;
         }
-        return state.auth.signedIn;
+
+        const infoResult = await playFabCall("Client/GetAccountInfo", {}, true);
+        const accountInfo = infoResult?.data?.AccountInfo;
+        const username = accountInfo?.Username
+          || accountInfo?.TitleInfo?.DisplayName
+          || localStorage.getItem(ACCOUNT_LAST_USERNAME_KEY)
+          || "player";
+
+        state.auth.username = username;
+        authUsernameInput.value = username;
+        localStorage.setItem(ACCOUNT_LAST_USERNAME_KEY, username);
+        accountStatus.textContent = `logged in as ${username}`;
+        renderAuthUi();
+        return true;
       } catch (error) {
         console.error(error);
         state.auth.signedIn = false;
-        accountStatus.textContent = "integrated account sign in failed";
+        state.auth.sessionTicket = "";
+        state.auth.playFabId = "";
+        accountStatus.textContent = "log in or create an account this account will be tied to this device";
+        renderAuthUi();
+        showAuthScreen();
         return false;
       } finally {
         state.auth.signingIn = false;
+        renderAuthUi();
       }
+    }
+
+    async function linkCurrentDeviceToAccount() {
+      await playFabCall("Client/LinkCustomID", {
+        CustomId: state.auth.customId,
+        ForceLink: false
+      }, true);
+
+      await playFabCall("Client/UpdateUserData", {
+        Data: {
+          [PLAYFAB_DEVICE_BINDING_KEY]: JSON.stringify({
+            deviceId: state.auth.deviceId,
+            username: state.auth.username,
+            boundAt: new Date().toISOString()
+          })
+        },
+        Permission: "Private"
+      }, true);
+    }
+
+    async function getBoundDeviceRecord() {
+      const result = await playFabCall("Client/GetUserData", {
+        Keys: [PLAYFAB_DEVICE_BINDING_KEY]
+      }, true);
+      const record = result?.data?.Data?.[PLAYFAB_DEVICE_BINDING_KEY]?.Value;
+      return record ? JSON.parse(record) : null;
+    }
+
+    async function finishAuth(loginData, username) {
+      if (username) {
+        state.auth.username = username;
+      }
+      state.auth.playFabId = loginData?.PlayFabId || "";
+      state.auth.sessionTicket = loginData?.SessionTicket || "";
+      state.auth.signedIn = Boolean(state.auth.sessionTicket);
+      if (!state.auth.signedIn) {
+        return false;
+      }
+
+      if (state.auth.username) {
+        localStorage.setItem(ACCOUNT_LAST_USERNAME_KEY, state.auth.username);
+      }
+      authUsernameInput.value = state.auth.username || authUsernameInput.value;
+      authPasswordInput.value = "";
+      await syncPlayFabDisplayName();
+      await loadPlayerSettings();
+      await loadWorldIndex();
+      authStatusText.textContent = "";
+      statusText.textContent = "";
+      showMainMenu();
+      renderAuthUi();
+      return true;
+    }
+
+    async function createAccount() {
+      const username = sanitizeAuthUsername(authUsernameInput.value);
+      const password = sanitizePassword(authPasswordInput.value);
+      if (!username) {
+        accountStatus.textContent = "enter a username with 3 to 20 letters numbers or underscores";
+        return false;
+      }
+      if (!password) {
+        accountStatus.textContent = "enter a password with at least 6 characters";
+        return false;
+      }
+
+      state.auth.signingIn = true;
+      renderAuthUi();
+      accountStatus.textContent = "creating account";
+      authStatusText.textContent = "";
+
+      try {
+        const result = await playFabCall("Client/RegisterPlayFabUser", {
+          TitleId: PLAYFAB_TITLE_ID,
+          Username: username,
+          Password: password,
+          DisplayName: username,
+          Email: getInternalEmail(username, state.auth.deviceId),
+          RequireBothUsernameAndEmail: true
+        });
+
+        await finishAuth(result?.data, username);
+        await linkCurrentDeviceToAccount();
+        accountStatus.textContent = `account created and tied to this device as ${username}`;
+        return true;
+      } catch (error) {
+        console.error(error);
+        accountStatus.textContent = error.message || "could not create account";
+        authStatusText.textContent = accountStatus.textContent;
+        state.auth.signedIn = false;
+        return false;
+      } finally {
+        state.auth.signingIn = false;
+        renderAuthUi();
+      }
+    }
+
+    async function loginAccount() {
+      const username = sanitizeAuthUsername(authUsernameInput.value);
+      const password = sanitizePassword(authPasswordInput.value);
+      if (!username) {
+        accountStatus.textContent = "enter your username";
+        return false;
+      }
+      if (!password) {
+        accountStatus.textContent = "enter your password";
+        return false;
+      }
+
+      state.auth.signingIn = true;
+      renderAuthUi();
+      accountStatus.textContent = "logging in";
+      authStatusText.textContent = "";
+
+      try {
+        const result = await playFabCall("Client/LoginWithPlayFab", {
+          TitleId: PLAYFAB_TITLE_ID,
+          Username: username,
+          Password: password
+        });
+
+        const loginData = result?.data;
+        state.auth.username = username;
+        state.auth.playFabId = loginData?.PlayFabId || "";
+        state.auth.sessionTicket = loginData?.SessionTicket || "";
+        state.auth.signedIn = Boolean(state.auth.sessionTicket);
+        if (!state.auth.signedIn) {
+          accountStatus.textContent = "could not log in";
+          authStatusText.textContent = accountStatus.textContent;
+          return false;
+        }
+
+        const boundRecord = await getBoundDeviceRecord();
+        if (boundRecord?.deviceId && boundRecord.deviceId !== state.auth.deviceId) {
+          state.auth.signedIn = false;
+          state.auth.sessionTicket = "";
+          state.auth.playFabId = "";
+          accountStatus.textContent = "this account is tied to a different device";
+          authStatusText.textContent = accountStatus.textContent;
+          return false;
+        }
+
+        if (!boundRecord?.deviceId) {
+          await linkCurrentDeviceToAccount();
+        }
+
+        await finishAuth(loginData, username);
+        accountStatus.textContent = `logged in as ${username} on this device`;
+        return true;
+      } catch (error) {
+        console.error(error);
+        accountStatus.textContent = error.message || "login failed";
+        authStatusText.textContent = accountStatus.textContent;
+        state.auth.signedIn = false;
+        state.auth.sessionTicket = "";
+        state.auth.playFabId = "";
+        return false;
+      } finally {
+        state.auth.signingIn = false;
+        renderAuthUi();
+      }
+    }
+
+    function sanitizeWorldName(value) {
+      const cleaned = (value || "")
+        .trim()
+        .replace(/\s+/g, " ")
+        .slice(0, 40);
+      return cleaned || "new world";
+    }
+
+    function sanitizeWorldSeed(value) {
+      return String(value || "").replace(/\D/g, "").slice(0, 30);
+    }
+
+    function generateRandomSeed() {
+      if (typeof crypto !== "undefined" && typeof crypto.getRandomValues === "function") {
+        const values = new Uint32Array(2);
+        crypto.getRandomValues(values);
+        return `${values[0]}${values[1]}`;
+      }
+
+      return `${Date.now()}${Math.floor(Math.random() * 1000000000)}`;
+    }
+
+    function hashSeed(seedText) {
+      const text = String(seedText || "");
+      let hash = 2166136261;
+      for (let i = 0; i < text.length; i += 1) {
+        hash ^= text.charCodeAt(i);
+        hash = Math.imul(hash, 16777619);
+      }
+      return hash >>> 0;
+    }
+
+    function formatSeedLabel(seedText) {
+      const text = String(seedText || "");
+      if (!text) {
+        return "random seed";
+      }
+      if (text.length <= 32) {
+        return text;
+      }
+      return `${text.slice(0, 29)}...`;
+    }
+
+    function createWorldId() {
+      if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+        return crypto.randomUUID();
+      }
+
+      return `world_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+    }
+
+    function cloneSlots(slots, length) {
+      const source = Array.isArray(slots) ? slots : [];
+      return Array.from({ length }, (_, index) => {
+        const slot = source[index];
+        const id = Number(slot?.id);
+        const count = Number(slot?.count);
+        return {
+          id: Number.isFinite(id) ? id : BLOCK.AIR,
+          count: Number.isFinite(count) ? count : 0
+        };
+      });
+    }
+
+    function resetInventoryState() {
+      state.selectedSlot = 0;
+      state.slots = cloneSlots([], 40);
+      state.inventoryCraftingSlots = cloneSlots([], 4);
+      state.tableCraftingSlots = cloneSlots([], 9);
+      state.craftingMode = "inventory";
+      state.craftResult = { id: BLOCK.AIR, count: 0, recipe: "none" };
+    }
+
+    function applyCurrentWorldMeta(meta) {
+      state.currentWorldId = meta?.worldId || "";
+      state.currentWorldName = meta?.name || "new world";
+      state.currentWorldSeed = meta?.seed || "";
+      state.currentSeedHash = hashSeed(state.currentWorldSeed);
+      state.currentWorldCreatedAt = meta?.createdAt || new Date().toISOString();
+    }
+
+    async function syncPlayFabDisplayName() {
+      if (!state.auth.signedIn || !state.auth.username) {
+        return;
+      }
+
+      try {
+        await playFabCall("Client/UpdateUserTitleDisplayName", {
+          DisplayName: state.auth.username
+        }, true);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    async function ensureSignedIn() {
+      if (state.auth.signedIn && state.auth.sessionTicket) {
+        await loadWorldIndex();
+        return true;
+      }
+      accountStatus.textContent = "please log in or create an account first";
+      statusText.textContent = "log in before you start";
+      return false;
     }
 
     async function playFabCall(path, body, needsAuth = false) {
@@ -1293,6 +2481,21 @@
       return data;
     }
 
+    async function executeCloudScript(functionName, functionParameter = {}) {
+      const result = await playFabCall("Client/ExecuteCloudScript", {
+        FunctionName: functionName,
+        FunctionParameter: functionParameter,
+        GeneratePlayStreamEvent: false
+      }, true);
+
+      const payload = result?.data?.FunctionResult;
+      if (result?.data?.Error || payload?.error) {
+        throw new Error(payload?.error || result.data.Error?.Message || "cloudscript call failed");
+      }
+
+      return payload || {};
+    }
+
     function clearWorldState() {
       state.changes.clear();
       state.heightCache.clear();
@@ -1300,6 +2503,11 @@
       state.target = null;
       state.lastChunkX = null;
       state.lastChunkZ = null;
+      state.spawnLoadedFromSave = false;
+      state.droppedItems.forEach((drop) => {
+        scene?.remove(drop.mesh);
+      });
+      state.droppedItems = [];
       for (const [, chunk] of state.chunks.entries()) {
         worldGroup.remove(chunk.mesh);
         chunk.mesh.geometry.dispose();
@@ -1308,43 +2516,463 @@
       rebuildRaycastTargets();
     }
 
-    function getWorldStorageKey(slot) {
-      return `${PLAYFAB_KEY_PREFIX}${slot}`;
+    function getWorldStorageKey(worldId) {
+      return `${PLAYFAB_WORLD_KEY_PREFIX}${worldId}`;
     }
 
-    function getFirstEmptyWorldSlot() {
-      for (const slot of [1, 2, 3]) {
-        if (!state.worldMeta[slot]?.hasWorld) {
-          return slot;
-        }
-      }
-      return 1;
-    }
-
-    function refreshWorldCards() {
-      worldCards.forEach((card) => {
-        const slot = Number(card.dataset.worldSlot || "1");
-        const meta = state.worldMeta[slot];
-        const title = card.querySelector(".world-name");
-        const subtitle = card.querySelector(".world-meta");
-        if (!title || !subtitle) {
-          return;
-        }
-
-        if (meta?.hasWorld) {
-          title.textContent = `${state.auth.username || "player"} world ${slot}`;
-          subtitle.textContent = meta.lastSavedAt
-            ? `saved ${new Date(meta.lastSavedAt).toLocaleString()}`
-            : "saved survival world";
-        } else {
-          title.textContent = `empty slot ${slot}`;
-          subtitle.textContent = "new survival world";
-        }
+    function sortWorldList(list) {
+      return [...list].sort((a, b) => {
+        const aTime = Date.parse(a?.lastSavedAt || a?.createdAt || 0) || 0;
+        const bTime = Date.parse(b?.lastSavedAt || b?.createdAt || 0) || 0;
+        return bTime - aTime;
       });
+    }
+
+    function sortChatList(list) {
+      return [...list].sort((a, b) => {
+        const aTime = Date.parse(a?.lastMessageAt || a?.updatedAt || a?.createdAt || 0) || 0;
+        const bTime = Date.parse(b?.lastMessageAt || b?.updatedAt || b?.createdAt || 0) || 0;
+        return bTime - aTime;
+      });
+    }
+
+    function normalizeWorldMeta(raw, index = 0) {
+      if (!raw) {
+        return null;
+      }
+
+      const worldId = String(raw.worldId || raw.id || "").trim();
+      if (!worldId) {
+        return null;
+      }
+
+      return {
+        worldId,
+        name: sanitizeWorldName(raw.name || `world ${index + 1}`),
+        seed: String(raw.seed || ""),
+        createdAt: raw.createdAt || raw.lastSavedAt || new Date().toISOString(),
+        lastSavedAt: raw.lastSavedAt || raw.createdAt || "",
+        storageKey: raw.storageKey || getWorldStorageKey(worldId)
+      };
+    }
+
+    function sanitizeChatUsername(value) {
+      return String(value || "").trim().replace(/[^a-zA-Z0-9_]/g, "").slice(0, 20);
+    }
+
+    function sanitizeChatMessage(value) {
+      return String(value || "").replace(/\r/g, "").trim().slice(0, 280);
+    }
+
+    function normalizeChatMeta(raw, index = 0) {
+      if (!raw) {
+        return null;
+      }
+
+      const chatId = String(raw.chatId || raw.id || "").trim();
+      const targetUsername = sanitizeChatUsername(raw.targetUsername || raw.withUsername || raw.otherUsername || "");
+      if (!chatId || !targetUsername) {
+        return null;
+      }
+
+      return {
+        chatId,
+        targetUsername,
+        createdAt: raw.createdAt || raw.updatedAt || new Date().toISOString(),
+        updatedAt: raw.updatedAt || raw.lastMessageAt || raw.createdAt || "",
+        lastMessageAt: raw.lastMessageAt || raw.updatedAt || raw.createdAt || "",
+        lastMessagePreview: String(raw.lastMessagePreview || "").slice(0, 80)
+      };
+    }
+
+    function normalizeChatMessage(raw, index = 0) {
+      if (!raw) {
+        return null;
+      }
+
+      const messageId = String(raw.messageId || raw.id || `${index}`).trim();
+      const senderUsername = sanitizeChatUsername(raw.senderUsername || raw.fromUsername || "");
+      const body = String(raw.body || raw.message || "").slice(0, 280);
+      if (!messageId || !senderUsername || !body) {
+        return null;
+      }
+
+      return {
+        messageId,
+        senderUsername,
+        body,
+        sentAt: raw.sentAt || raw.createdAt || new Date().toISOString()
+      };
+    }
+
+    async function loadLegacyWorldIndex() {
+      try {
+        const result = await playFabCall("Client/GetUserData", {
+          Keys: [PLAYFAB_LEGACY_META_KEY]
+        }, true);
+        const record = result?.data?.Data?.[PLAYFAB_LEGACY_META_KEY]?.Value;
+        if (!record) {
+          return [];
+        }
+
+        const parsed = JSON.parse(record);
+        const worlds = [];
+        for (const slot of [1, 2, 3]) {
+          const meta = parsed?.[String(slot)];
+          if (!meta?.hasWorld) {
+            continue;
+          }
+          worlds.push({
+            worldId: `legacy-slot-${slot}`,
+            name: sanitizeWorldName(meta.name || `${state.auth.username || "player"} world ${slot}`),
+            seed: String(meta.seed || ""),
+            createdAt: meta.createdAt || meta.lastSavedAt || new Date().toISOString(),
+            lastSavedAt: meta.lastSavedAt || "",
+            storageKey: `shitcraft_world_slot_${slot}`
+          });
+        }
+        return worlds;
+      } catch (error) {
+        console.error(error);
+        return [];
+      }
+    }
+
+    function renderWorldList() {
+      worldListEl.innerHTML = "";
+      const worlds = sortWorldList(state.worldList);
+      worldCountLabel.textContent = `${worlds.length} / ${MAX_WORLD_COUNT}`;
+      if (state.selectedWorldId && !worlds.some((world) => world.worldId === state.selectedWorldId)) {
+        state.selectedWorldId = "";
+      }
+
+      if (worlds.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "world-list-empty";
+        empty.textContent = "no worlds yet create one above and it will show up here";
+        worldListEl.appendChild(empty);
+        updateWorldActionButtons();
+        return;
+      }
+
+      worlds.forEach((meta) => {
+        const card = document.createElement("div");
+        card.className = `world-card${state.selectedWorldId === meta.worldId ? " selected" : ""}`;
+        card.dataset.worldId = meta.worldId;
+
+        const title = document.createElement("h3");
+        title.className = "world-name";
+        title.textContent = meta.name;
+
+        const subtitle = document.createElement("p");
+        subtitle.className = "world-meta";
+        subtitle.textContent = meta.lastSavedAt
+          ? `saved ${new Date(meta.lastSavedAt).toLocaleString()}`
+          : "ready to play";
+
+        const seed = document.createElement("div");
+        seed.className = "world-seed";
+        seed.textContent = `seed ${formatSeedLabel(meta.seed)}`;
+
+        card.appendChild(title);
+        card.appendChild(subtitle);
+        card.appendChild(seed);
+        card.addEventListener("click", () => {
+          state.selectedWorldId = meta.worldId;
+          state.worldActionMode = "";
+          worldStatus.textContent = `${meta.name} selected`;
+          renderWorldList();
+        });
+        worldListEl.appendChild(card);
+      });
+
+      updateWorldActionButtons();
+    }
+
+    function getSelectedWorldMeta() {
+      return state.worldList.find((entry) => entry.worldId === state.selectedWorldId) || null;
+    }
+
+    function renderWorldActionPanels() {
+      const world = getSelectedWorldMeta();
+      const showRename = state.worldActionMode === "rename" && Boolean(world);
+      const showDelete = state.worldActionMode === "delete" && Boolean(world);
+      worldRenamePanel.classList.toggle("hidden", !showRename);
+      worldDeletePanel.classList.toggle("hidden", !showDelete);
+      if (showDelete && world) {
+        deleteWorldCopy.textContent = `delete ${world.name} this cannot be undone`;
+      }
+    }
+
+    function updateWorldActionButtons() {
+      const hasSelection = Boolean(getSelectedWorldMeta());
+      playWorldBtn.disabled = !hasSelection;
+      renameWorldBtn.disabled = !hasSelection;
+      deleteWorldBtn.disabled = !hasSelection;
+      if (!hasSelection) {
+        state.worldActionMode = "";
+      }
+      renderWorldActionPanels();
+    }
+
+    function getSelectedChatMeta() {
+      return state.chatList.find((entry) => entry.chatId === state.selectedChatId) || null;
+    }
+
+    function renderChatMessages() {
+      chatMessagesEl.innerHTML = "";
+      const chat = getSelectedChatMeta();
+      const hasChat = Boolean(chat);
+      chatThreadEmpty.classList.toggle("hidden", hasChat);
+      chatThreadPanel.classList.toggle("hidden", !hasChat);
+      sendChatBtn.disabled = !hasChat;
+      refreshChatBtn.disabled = !hasChat;
+      chatMessageInput.disabled = !hasChat;
+
+      if (!hasChat) {
+        return;
+      }
+
+      chatThreadTitle.textContent = chat.targetUsername;
+      chatThreadSubtitle.textContent = chat.lastMessageAt
+        ? `last message ${new Date(chat.lastMessageAt).toLocaleString()}`
+        : "no messages yet";
+
+      if (state.chatMessages.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "chat-message-empty";
+        empty.textContent = "no messages yet say hi to start the chat";
+        chatMessagesEl.appendChild(empty);
+        return;
+      }
+
+      state.chatMessages.forEach((message) => {
+        const card = document.createElement("div");
+        card.className = `chat-message${message.senderUsername === state.auth.username ? " own" : ""}`;
+
+        const meta = document.createElement("div");
+        meta.className = "chat-message-meta";
+        meta.innerHTML = `<span>${message.senderUsername}</span><span>${new Date(message.sentAt).toLocaleString()}</span>`;
+
+        const body = document.createElement("div");
+        body.className = "chat-message-body";
+        body.textContent = message.body;
+
+        card.appendChild(meta);
+        card.appendChild(body);
+        chatMessagesEl.appendChild(card);
+      });
+
+      chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
+    }
+
+    function renderChatList() {
+      chatListEl.innerHTML = "";
+      const chats = sortChatList(state.chatList);
+      chatCountLabel.textContent = `${chats.length} / ${MAX_CHAT_COUNT}`;
+      if (state.selectedChatId && !chats.some((chat) => chat.chatId === state.selectedChatId)) {
+        state.selectedChatId = "";
+        state.chatMessages = [];
+      }
+
+      if (chats.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "world-list-empty";
+        empty.textContent = "no chats yet add a player username above to start one";
+        chatListEl.appendChild(empty);
+        renderChatMessages();
+        return;
+      }
+
+      chats.forEach((meta) => {
+        const card = document.createElement("div");
+        card.className = `world-card${state.selectedChatId === meta.chatId ? " selected" : ""}`;
+
+        const title = document.createElement("h3");
+        title.className = "world-name";
+        title.textContent = meta.targetUsername;
+
+        const subtitle = document.createElement("p");
+        subtitle.className = "world-meta";
+        subtitle.textContent = meta.lastMessagePreview || "no messages yet";
+
+        const stamp = document.createElement("div");
+        stamp.className = "world-seed";
+        stamp.textContent = meta.lastMessageAt
+          ? `updated ${new Date(meta.lastMessageAt).toLocaleString()}`
+          : "ready to chat";
+
+        card.appendChild(title);
+        card.appendChild(subtitle);
+        card.appendChild(stamp);
+        card.addEventListener("click", async () => {
+          state.selectedChatId = meta.chatId;
+          chatStatus.textContent = `opening chat with ${meta.targetUsername}`;
+          renderChatList();
+          await loadChatMessages(meta.chatId);
+        });
+        chatListEl.appendChild(card);
+      });
+
+      renderChatMessages();
+    }
+
+    async function loadChats() {
+      if (!state.auth.signedIn) {
+        return;
+      }
+
+      try {
+        const payload = await executeCloudScript(PLAYFAB_CHAT_LIST_FUNCTION, {});
+        state.chatList = sortChatList(
+          (payload?.chats || [])
+            .map((entry, index) => normalizeChatMeta(entry, index))
+            .filter(Boolean)
+            .slice(0, MAX_CHAT_COUNT)
+        );
+        renderChatList();
+      } catch (error) {
+        console.error(error);
+        chatStatus.textContent = "could not load chats from playfab cloudscript";
+      }
+    }
+
+    async function loadChatMessages(chatId) {
+      const chat = state.chatList.find((entry) => entry.chatId === chatId);
+      if (!chat) {
+        return;
+      }
+
+      try {
+        const payload = await executeCloudScript(PLAYFAB_CHAT_MESSAGES_FUNCTION, { chatId });
+        state.chatMessages = (payload?.messages || [])
+          .map((entry, index) => normalizeChatMessage(entry, index))
+          .filter(Boolean);
+        state.selectedChatId = chatId;
+        chatStatus.textContent = `chat with ${chat.targetUsername} loaded`;
+        renderChatList();
+      } catch (error) {
+        console.error(error);
+        chatStatus.textContent = error.message || "could not load messages";
+      }
+    }
+
+    async function refreshSelectedChat() {
+      const chat = getSelectedChatMeta();
+      if (!chat) {
+        chatStatus.textContent = "select a chat first";
+        return;
+      }
+      await loadChatMessages(chat.chatId);
+    }
+
+    async function startChatWithUsername() {
+      const targetUsername = sanitizeChatUsername(chatUsernameInput.value);
+      if (!targetUsername) {
+        chatStatus.textContent = "enter a username with letters numbers or underscores";
+        return;
+      }
+      if (targetUsername.toLowerCase() === state.auth.username.toLowerCase()) {
+        chatStatus.textContent = "you cannot start a chat with yourself";
+        return;
+      }
+
+      chatStatus.textContent = `starting a chat with ${targetUsername}`;
+      try {
+        const payload = await executeCloudScript(PLAYFAB_CHAT_START_FUNCTION, { targetUsername });
+        const chatMeta = normalizeChatMeta(payload?.chat || payload, 0);
+        if (!chatMeta) {
+          throw new Error("chat could not be created");
+        }
+
+        state.chatList = sortChatList([
+          chatMeta,
+          ...state.chatList.filter((entry) => entry.chatId !== chatMeta.chatId)
+        ]).slice(0, MAX_CHAT_COUNT);
+        state.selectedChatId = chatMeta.chatId;
+        state.chatMessages = [];
+        chatUsernameInput.value = "";
+        renderChatList();
+        await loadChatMessages(chatMeta.chatId);
+        chatStatus.textContent = `chat started with ${chatMeta.targetUsername}`;
+      } catch (error) {
+        console.error(error);
+        chatStatus.textContent = error.message || "could not start the chat";
+      }
+    }
+
+    async function sendCurrentChatMessage() {
+      const chat = getSelectedChatMeta();
+      if (!chat) {
+        chatStatus.textContent = "select a chat first";
+        return;
+      }
+
+      const body = sanitizeChatMessage(chatMessageInput.value);
+      if (!body) {
+        chatStatus.textContent = "type a message first";
+        return;
+      }
+
+      try {
+        const payload = await executeCloudScript(PLAYFAB_CHAT_SEND_FUNCTION, {
+          chatId: chat.chatId,
+          body
+        });
+        const message = normalizeChatMessage(payload?.message || payload, state.chatMessages.length);
+        if (message) {
+          state.chatMessages.push(message);
+        }
+        const updatedChat = {
+          ...chat,
+          lastMessageAt: message?.sentAt || new Date().toISOString(),
+          updatedAt: message?.sentAt || new Date().toISOString(),
+          lastMessagePreview: body
+        };
+        state.chatList = sortChatList([
+          updatedChat,
+          ...state.chatList.filter((entry) => entry.chatId !== chat.chatId)
+        ]).slice(0, MAX_CHAT_COUNT);
+        state.selectedChatId = updatedChat.chatId;
+        chatMessageInput.value = "";
+        chatStatus.textContent = `message sent to ${updatedChat.targetUsername}`;
+        renderChatList();
+      } catch (error) {
+        console.error(error);
+        chatStatus.textContent = error.message || "could not send the message";
+      }
+    }
+
+    async function openChatMenu() {
+      await loadChats();
+      mainMenu.classList.add("hidden");
+      worldMenu.classList.add("hidden");
+      chatMenu.classList.remove("hidden");
+      if (!getSelectedChatMeta()) {
+        state.chatMessages = [];
+      }
+      renderChatList();
+      chatStatus.textContent = state.chatList.length > 0
+        ? "select a chat to read or send messages"
+        : "start a chat by entering a username";
+      statusText.textContent = "";
     }
 
     function serializeWorldState() {
       const changedBlocks = [];
+      const droppedItems = state.droppedItems.map((drop) => ({
+        id: drop.id,
+        count: drop.count,
+        x: drop.mesh.position.x,
+        y: drop.mesh.position.y,
+        z: drop.mesh.position.z,
+        vx: drop.vx || 0,
+        vy: drop.vy || 0,
+        vz: drop.vz || 0,
+        age: drop.age || 0,
+        spin: drop.spin || 1,
+        rotationY: drop.mesh.rotation.y || 0
+      }));
 
       for (const [key, value] of state.changes.entries()) {
         const [x, y, z] = key.split(",").map(Number);
@@ -1359,9 +2987,35 @@
 
       return {
         username: state.auth.username,
-        worldSlot: state.worldSlot,
+        worldId: state.currentWorldId,
+        worldName: state.currentWorldName,
+        worldSeed: state.currentWorldSeed,
+        seedHash: state.currentSeedHash,
+        createdAt: state.currentWorldCreatedAt,
         playFabId: state.auth.playFabId,
         changedBlocks,
+        player: {
+          position: {
+            x: state.player.position.x,
+            y: state.player.position.y,
+            z: state.player.position.z
+          },
+          velocity: {
+            x: state.player.velocity.x,
+            y: state.player.velocity.y,
+            z: state.player.velocity.z
+          },
+          yaw: state.player.yaw,
+          pitch: state.player.pitch,
+          onGround: state.player.onGround
+        },
+        inventory: {
+          selectedSlot: state.selectedSlot,
+          slots: cloneSlots(state.slots, 40),
+          craftingSlots: cloneSlots(state.inventoryCraftingSlots, 4)
+        },
+        dayTime: state.dayTime,
+        droppedItems,
         loadedChunks: Array.from(state.chunks.keys()).map((key) => {
           const [cx, cz] = key.split(",").map(Number);
           return { cx, cz };
@@ -1372,6 +3026,11 @@
 
     function applySerializedWorldState(world) {
       state.changes.clear();
+      resetInventoryState();
+      state.droppedItems.forEach((drop) => {
+        scene?.remove(drop.mesh);
+      });
+      state.droppedItems = [];
 
       (world?.changedBlocks || []).forEach((entry) => {
         const x = Number(entry?.x);
@@ -1384,10 +3043,62 @@
         }
         state.changes.set(blockKey(x, y, z), action === "broken" ? BLOCK.AIR : blockType);
       });
+
+      if (world?.inventory) {
+        state.selectedSlot = Math.max(0, Math.min(9, Number(world.inventory.selectedSlot) || 0));
+        state.slots = cloneSlots(world.inventory.slots, 40);
+        state.inventoryCraftingSlots = cloneSlots(world.inventory.craftingSlots, 4);
+        state.tableCraftingSlots = cloneSlots([], 9);
+        state.craftingMode = "inventory";
+      }
+
+      if (world?.player?.position) {
+        state.player.position.set(
+          Number(world.player.position.x) || 0,
+          Number(world.player.position.y) || 24,
+          Number(world.player.position.z) || 0
+        );
+        state.player.velocity.set(
+          Number(world.player.velocity?.x) || 0,
+          Number(world.player.velocity?.y) || 0,
+          Number(world.player.velocity?.z) || 0
+        );
+        state.player.yaw = Number(world.player.yaw) || 0;
+        state.player.pitch = Number(world.player.pitch) || 0;
+        state.player.onGround = Boolean(world.player.onGround);
+        state.spawnLoadedFromSave = true;
+      }
+
+      if (Number.isFinite(Number(world?.dayTime))) {
+        state.dayTime = ((Number(world.dayTime) % FULL_DAY_DURATION) + FULL_DAY_DURATION) % FULL_DAY_DURATION;
+      }
+
+      (world?.droppedItems || []).forEach((entry) => {
+        const id = Number(entry?.id);
+        const count = Number(entry?.count);
+        const x = Number(entry?.x);
+        const y = Number(entry?.y);
+        const z = Number(entry?.z);
+        if (!Number.isFinite(id) || !Number.isFinite(count) || count <= 0 || !Number.isFinite(x) || !Number.isFinite(y) || !Number.isFinite(z)) {
+          return;
+        }
+
+        spawnDroppedItem(x, y, z, id, count);
+        const drop = state.droppedItems[state.droppedItems.length - 1];
+        if (!drop) {
+          return;
+        }
+        drop.vx = Number(entry?.vx) || 0;
+        drop.vy = Number(entry?.vy) || 0;
+        drop.vz = Number(entry?.vz) || 0;
+        drop.age = Number(entry?.age) || 0;
+        drop.spin = Number(entry?.spin) || drop.spin;
+        drop.mesh.rotation.y = Number(entry?.rotationY) || 0;
+      });
     }
 
-    async function loadWorldState(slot) {
-      const worldKey = getWorldStorageKey(slot);
+    async function loadWorldState(worldMeta) {
+      const worldKey = worldMeta?.storageKey || getWorldStorageKey(worldMeta?.worldId || "");
 
       try {
         const result = await playFabCall("Client/GetUserData", {
@@ -1396,70 +3107,97 @@
         const record = result?.data?.Data?.[worldKey]?.Value;
         if (record) {
           applySerializedWorldState(JSON.parse(record));
+          return true;
         }
       } catch (error) {
         console.error(error);
         accountStatus.textContent = "cloud load failed";
       }
+
+      return false;
     }
 
-    async function loadWorldMeta() {
+    async function loadWorldIndex() {
       if (!state.auth.signedIn) {
         return;
       }
 
       try {
         const result = await playFabCall("Client/GetUserData", {
-          Keys: [PLAYFAB_META_KEY]
+          Keys: [PLAYFAB_WORLDS_INDEX_KEY]
         }, true);
-        const record = result?.data?.Data?.[PLAYFAB_META_KEY]?.Value;
+        const record = result?.data?.Data?.[PLAYFAB_WORLDS_INDEX_KEY]?.Value;
         if (record) {
           const parsed = JSON.parse(record);
-          state.worldMeta = {
-            1: parsed?.["1"] || null,
-            2: parsed?.["2"] || null,
-            3: parsed?.["3"] || null
-          };
+          state.worldList = sortWorldList(
+            (parsed?.worlds || [])
+              .map((entry, index) => normalizeWorldMeta(entry, index))
+              .filter(Boolean)
+              .slice(0, MAX_WORLD_COUNT)
+          );
         } else {
-          state.worldMeta = { 1: null, 2: null, 3: null };
+          state.worldList = sortWorldList((await loadLegacyWorldIndex()).slice(0, MAX_WORLD_COUNT));
         }
       } catch (error) {
         console.error(error);
-        accountStatus.textContent = "could not load world slots";
+        accountStatus.textContent = "could not load worlds";
       }
 
-      refreshWorldCards();
+      renderWorldList();
+    }
+
+    async function saveWorldIndexOnly() {
+      if (!state.auth.signedIn) {
+        return false;
+      }
+
+      try {
+        await playFabCall("Client/UpdateUserData", {
+          Data: {
+            [PLAYFAB_WORLDS_INDEX_KEY]: JSON.stringify({ worlds: state.worldList })
+          },
+          Permission: "Private"
+        }, true);
+        return true;
+      } catch (error) {
+        console.error(error);
+        accountStatus.textContent = "could not update world list";
+        return false;
+      }
     }
 
     async function saveWorldState() {
-      if (!state.auth.signedIn) {
+      if (!state.auth.signedIn || !state.currentWorldId) {
         return;
       }
 
       const payload = serializeWorldState();
-      const worldKey = getWorldStorageKey(state.worldSlot);
-      const nextMeta = {
-        ...state.worldMeta,
-        [state.worldSlot]: {
-          hasWorld: true,
-          worldSlot: state.worldSlot,
-          username: state.auth.username,
-          lastSavedAt: payload.savedAt
+      const worldKey = (state.worldList.find((entry) => entry.worldId === state.currentWorldId)?.storageKey)
+        || getWorldStorageKey(state.currentWorldId);
+      const nextMeta = sortWorldList([
+        ...state.worldList.filter((entry) => entry.worldId !== state.currentWorldId),
+        {
+          worldId: state.currentWorldId,
+          name: state.currentWorldName,
+          seed: state.currentWorldSeed,
+          createdAt: state.currentWorldCreatedAt || payload.savedAt,
+          lastSavedAt: payload.savedAt,
+          storageKey: worldKey
         }
-      };
+      ]).slice(0, MAX_WORLD_COUNT);
       state.lastSavedAt = performance.now();
 
       try {
         await playFabCall("Client/UpdateUserData", {
           Data: {
             [worldKey]: JSON.stringify(payload),
-            [PLAYFAB_META_KEY]: JSON.stringify(nextMeta)
+            [PLAYFAB_WORLDS_INDEX_KEY]: JSON.stringify({ worlds: nextMeta })
           },
           Permission: "Private"
         }, true);
-        state.worldMeta = nextMeta;
-        refreshWorldCards();
-        accountStatus.textContent = `saved to integrated account ${state.auth.username}`;
+        state.worldList = nextMeta;
+        renderWorldList();
+        accountStatus.textContent = `saved to playfab account ${state.auth.username}`;
       } catch (error) {
         console.error(error);
         accountStatus.textContent = "cloud save failed";
@@ -1489,6 +3227,8 @@
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
+      resizeItemPreview(heldPreview, 176, 176);
+      resizeItemPreview(dragPreview, 94, 94);
     }
 
     function onKeyDown(event) {
@@ -1564,14 +3304,20 @@
       }
 
       if (event.button === 2) {
+        if (state.target?.id === BLOCK.CRAFTING_TABLE) {
+          openCraftingInterface("table");
+          return;
+        }
         placeSelectedBlock();
       }
     }
 
     function onGlobalPointerDown(event) {
       state.lastPointerType = event.pointerType || "mouse";
+    }
 
-      if (!state.inventoryOpen || !state.drag.active) {
+    function onGlobalMouseDown(event) {
+      if (!state.inventoryOpen || !state.drag.active || event.button !== 2) {
         return;
       }
 
@@ -1582,13 +3328,35 @@
 
       const slotType = slotElement.dataset.slotType || "inventory";
       const slotIndex = Number(slotElement.dataset.slotIndex);
-
-      if (event.pointerType === "mouse" && event.button === 2) {
-        event.preventDefault();
-        if (slotType !== "craft-result") {
-          dropOneToSlot(slotType, slotIndex);
-        }
+      if (slotType === "craft-result") {
+        return;
       }
+
+      event.preventDefault();
+      dropOneToSlot(slotType, slotIndex);
+    }
+
+    function onGlobalContextMenu(event) {
+      if (!state.inventoryOpen || !state.drag.active) {
+        event.preventDefault();
+        return;
+      }
+
+      const slotElement = event.target?.closest?.("[data-slot-index]");
+      if (!slotElement) {
+        event.preventDefault();
+        return;
+      }
+
+      const slotType = slotElement.dataset.slotType || "inventory";
+      const slotIndex = Number(slotElement.dataset.slotIndex);
+      if (slotType === "craft-result") {
+        event.preventDefault();
+        return;
+      }
+
+      event.preventDefault();
+      dropOneToSlot(slotType, slotIndex);
     }
 
     function onMouseUp(event) {
@@ -1618,8 +3386,10 @@
         const slotType = slotElement.dataset.slotType || "inventory";
         const slotIndex = Number(slotElement.dataset.slotIndex);
         if ((event.pointerType || state.drag.pointerType) === "touch" || state.drag.pointerType === "touch") {
-          if (slotType !== "craft-result") {
-            dropOneToSlot(slotType, slotIndex);
+          if (slotType === "craft-result") {
+            takeCraftResult(event.clientX, event.clientY, event.pointerType || "touch");
+          } else {
+            dropDrag(slotType, slotIndex);
           }
         } else if (slotType === "craft-result") {
           takeCraftResult(event.clientX, event.clientY, event.pointerType || "mouse");
@@ -1689,8 +3459,11 @@
           return;
         }
         state.mobile.lookPointerId = event.pointerId;
+        state.mobile.lookStartX = event.clientX;
+        state.mobile.lookStartY = event.clientY;
         state.mobile.lastLookX = event.clientX;
         state.mobile.lastLookY = event.clientY;
+        state.mobile.lookMoved = false;
         lookPad.setPointerCapture(event.pointerId);
       });
 
@@ -1703,6 +3476,9 @@
         const dy = event.clientY - state.mobile.lastLookY;
         state.mobile.lastLookX = event.clientX;
         state.mobile.lastLookY = event.clientY;
+        if (Math.abs(event.clientX - state.mobile.lookStartX) > 10 || Math.abs(event.clientY - state.mobile.lookStartY) > 10) {
+          state.mobile.lookMoved = true;
+        }
 
         state.player.yaw -= THREE.MathUtils.clamp(dx, -24, 24) * 0.015;
         state.player.pitch -= THREE.MathUtils.clamp(dy, -24, 24) * 0.015;
@@ -1711,7 +3487,11 @@
 
       const endLook = (event) => {
         if (state.mobile.lookPointerId === event.pointerId) {
+          if (!state.mobile.lookMoved && state.target?.id === BLOCK.CRAFTING_TABLE) {
+            openCraftingInterface("table");
+          }
           state.mobile.lookPointerId = null;
+          state.mobile.lookMoved = false;
         }
       };
 
@@ -1779,15 +3559,17 @@
     }
 
     function setSpawnPoint() {
-      let spawnX = 6;
-      let spawnZ = 6;
+      const seedBaseX = ((state.currentSeedHash % 97) - 48);
+      const seedBaseZ = (((Math.floor(state.currentSeedHash / 97)) % 97) - 48);
+      let spawnX = seedBaseX;
+      let spawnZ = seedBaseZ;
 
       for (let radius = 0; radius < 12; radius += 1) {
         let found = false;
         for (let z = -radius; z <= radius && !found; z += 1) {
           for (let x = -radius; x <= radius && !found; x += 1) {
-            const testX = 6 + x;
-            const testZ = 6 + z;
+            const testX = seedBaseX + x;
+            const testZ = seedBaseZ + z;
             const top = getTerrainHeight(testX, testZ);
             const head1 = getBlock(testX, top + 1, testZ);
             const head2 = getBlock(testX, top + 2, testZ);
@@ -1810,6 +3592,130 @@
       state.player.pitch = 0;
     }
 
+    function mixHex(a, b, t) {
+      const colorA = new THREE.Color(a);
+      const colorB = new THREE.Color(b);
+      return colorA.lerp(colorB, t);
+    }
+
+    function getCaveShadeAt(x, y, z) {
+      let openCount = 0;
+      let solidCount = 0;
+      for (let i = 1; i <= 14; i += 1) {
+        const blockId = getBlock(x, y + i, z);
+        if (blockId === BLOCK.AIR) {
+          openCount += 1;
+        } else {
+          solidCount += 1;
+        }
+      }
+      const openness = openCount / 14;
+      const densityPenalty = THREE.MathUtils.clamp(solidCount / 10, 0, 1);
+      return THREE.MathUtils.clamp((1 - openness) * 0.82 + densityPenalty * 0.18, 0, 1);
+    }
+
+    function createCelestialTexture(kind) {
+      const canvas = document.createElement("canvas");
+      canvas.width = 32;
+      canvas.height = 32;
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, 32, 32);
+      if (kind === "sun") {
+        for (let y = 8; y < 24; y += 1) {
+          for (let x = 8; x < 24; x += 1) {
+            const edge = x === 8 || x === 23 || y === 8 || y === 23;
+            ctx.fillStyle = edge ? "#f38b20" : "#ffd85a";
+            ctx.fillRect(x, y, 1, 1);
+          }
+        }
+        ctx.fillStyle = "#fff4a3";
+        ctx.fillRect(12, 12, 8, 8);
+      } else {
+        for (let y = 7; y < 25; y += 1) {
+          for (let x = 7; x < 25; x += 1) {
+            const dx = x - 16;
+            const dy = y - 16;
+            if ((dx * dx) + (dy * dy) <= 64) {
+              ctx.fillStyle = "#e5eef8";
+              ctx.fillRect(x, y, 1, 1);
+            }
+          }
+        }
+        ctx.fillStyle = "#8da0b4";
+        ctx.fillRect(18, 10, 3, 3);
+        ctx.fillRect(12, 18, 2, 2);
+      }
+      const texture = new THREE.CanvasTexture(canvas);
+      texture.magFilter = THREE.NearestFilter;
+      texture.minFilter = THREE.NearestFilter;
+      texture.needsUpdate = true;
+      return texture;
+    }
+
+    function updateDayNight(delta) {
+      if (state.started && !state.paused) {
+        state.dayTime = (state.dayTime + delta) % FULL_DAY_DURATION;
+      }
+
+      let angle = 0;
+      if (state.dayTime < DAY_DURATION) {
+        angle = (state.dayTime / DAY_DURATION) * Math.PI;
+      } else {
+        angle = Math.PI + (((state.dayTime - DAY_DURATION) / NIGHT_DURATION) * Math.PI);
+      }
+      const sunHeight = Math.sin(angle);
+      const sunX = Math.cos(angle);
+      const sunZ = Math.sin(angle * 0.5 + 0.45);
+      sunDirection.set(sunX, sunHeight, sunZ).normalize();
+
+      const daylight = THREE.MathUtils.clamp((sunHeight + 0.12) / 0.95, 0, 1);
+      const warmBand = THREE.MathUtils.clamp(1 - Math.abs(sunHeight) * 3.2, 0, 1);
+      const caveShade = state.started
+        ? getCaveShadeAt(
+          Math.floor(state.player.position.x),
+          Math.floor(state.player.position.y + EYE_HEIGHT),
+          Math.floor(state.player.position.z)
+        )
+        : 0;
+      const caveLight = 1 - (caveShade * 0.82);
+      const skyColor = daylight > 0.1
+        ? mixHex(0xf3a25d, 0x8fb9e8, THREE.MathUtils.clamp(daylight * 1.08, 0, 1))
+        : mixHex(0x0f1324, 0x25345b, THREE.MathUtils.clamp(daylight * 2.4, 0, 1));
+      const fogColor = daylight > 0.1
+        ? mixHex(0xe68a5f, 0x94a3ab, THREE.MathUtils.clamp(daylight, 0, 1))
+        : mixHex(0x0a0d16, 0x31415f, THREE.MathUtils.clamp(daylight * 2.2, 0, 1));
+      const effectiveFog = fogColor.clone().multiplyScalar(0.28 + caveLight * 0.72);
+
+      scene.background.copy(skyColor);
+      scene.fog.color.copy(effectiveFog);
+      if (blockMaterial?.uniforms) {
+        blockMaterial.uniforms.uSunDir.value.copy(sunDirection);
+        blockMaterial.uniforms.uFogColor.value.copy(effectiveFog);
+      }
+
+      if (hemiLight) {
+        hemiLight.intensity = (0.14 + (daylight * 1.1)) * caveLight;
+        hemiLight.color.copy(mixHex(0x516382, 0xcfe6ff, daylight));
+        hemiLight.groundColor.copy(mixHex(0x14151c, 0x4b433d, daylight));
+      }
+
+      if (sunLight) {
+        sunLight.intensity = daylight * (0.35 + warmBand * 0.22 + 0.95) * caveLight;
+        sunLight.color.copy(mixHex(0xff9857, 0xffffff, THREE.MathUtils.clamp(daylight + 0.2, 0, 1)));
+        sunLight.position.set(sunDirection.x * 60, Math.max(-8, sunDirection.y * 60), sunDirection.z * 42);
+      }
+
+      const celestialRadius = 90;
+      if (sunSprite) {
+        sunSprite.position.set(camera.position.x + (sunDirection.x * celestialRadius), camera.position.y + (sunDirection.y * celestialRadius), camera.position.z + (sunDirection.z * celestialRadius));
+        sunSprite.visible = sunHeight > -0.2 && caveShade < 0.5;
+      }
+      if (moonSprite) {
+        moonSprite.position.set(camera.position.x - (sunDirection.x * celestialRadius), camera.position.y - (sunDirection.y * celestialRadius), camera.position.z - (sunDirection.z * celestialRadius));
+        moonSprite.visible = sunHeight < 0.22 && caveShade < 0.5;
+      }
+    }
+
     function animate() {
       requestAnimationFrame(animate);
       if (!state.gameReady) {
@@ -1819,13 +3725,16 @@
       const delta = Math.min(clock.getDelta(), 0.05);
 
       if (state.started && !state.paused) {
+        updateDayNight(delta);
         updatePlayer(delta);
         refreshChunksAroundPlayer(false);
         flushDirtyChunks();
         updateTargetedBlock();
         updateMining();
+        updateDroppedItems(delta);
       } else if (state.started) {
         stopMining();
+        updateDayNight(0);
       }
 
       updateStatusLine();
@@ -1835,6 +3744,8 @@
       }
 
       renderer.render(scene, camera);
+      renderItemPreview(heldPreview, delta);
+      renderItemPreview(dragPreview, delta);
     }
 
     function updatePlayer(delta) {
@@ -1947,12 +3858,14 @@
     }
 
     function hash2(x, z) {
-      const v = Math.sin((x * 127.1) + (z * 311.7)) * 43758.5453123;
+      const seed = state.currentSeedHash * 0.0001;
+      const v = Math.sin((x * 127.1) + (z * 311.7) + (seed * 91.3)) * 43758.5453123;
       return v - Math.floor(v);
     }
 
     function hash3(x, y, z) {
-      const v = Math.sin((x * 127.1) + (y * 311.7) + (z * 74.7)) * 43758.5453123;
+      const seed = state.currentSeedHash * 0.0001;
+      const v = Math.sin((x * 127.1) + (y * 311.7) + (z * 74.7) + (seed * 53.9)) * 43758.5453123;
       return v - Math.floor(v);
     }
 
@@ -2339,7 +4252,29 @@
       }
 
       if (blockId === BLOCK.CRAFTING_TABLE) {
-        return 9;
+        if (faceId === 2) {
+          return 9;
+        }
+        if (faceId === 3) {
+          return 11;
+        }
+        return 10;
+      }
+
+      if (blockId === BLOCK.COBBLESTONE) {
+        return 12;
+      }
+
+      if (blockId === BLOCK.STICK) {
+        return 13;
+      }
+
+      if (blockId === BLOCK.WOOD_PICKAXE) {
+        return 14;
+      }
+
+      if (blockId === BLOCK.STONE_PICKAXE) {
+        return 15;
       }
 
       return 1;
@@ -2408,7 +4343,7 @@
             float sun = max(dot(normal, normalize(uSunDir)), 0.0);
             float hemi = normal.y * 0.5 + 0.5;
             float bounce = max(dot(normal, normalize(vec3(-uSunDir.x, 0.25, -uSunDir.z))), 0.0);
-            float light = 0.32 + sun * 0.52 + hemi * 0.18 + bounce * 0.08;
+            float light = 0.46 + sun * 0.38 + hemi * 0.12 + bounce * 0.06;
 
             float huePulse = sin((vWorldPos.x + vWorldPos.z) * 0.08 + uTime * 0.4) * 0.01;
             vec3 color = tex.rgb * light;
@@ -2453,64 +4388,274 @@
         }
       };
 
-      paintTile(0, (ctx2d, x, y) => {
-        fillNoiseTile(ctx2d, x, y, ["#5fbf39", "#7edc4f", "#47a72a", "#9eef60", "#6bcf42"]);
-        for (let py = 0; py < 10; py += 1) {
-          ctx2d.fillStyle = ["#a7f57a", "#91e765", "#7dd457"][py % 3];
+      const shade = (hex, amount) => {
+        const value = hex.replace("#", "");
+        const num = Number.parseInt(value, 16);
+        const adjust = (channel) => Math.max(0, Math.min(255, channel + amount));
+        const r = adjust((num >> 16) & 255);
+        const g = adjust((num >> 8) & 255);
+        const b = adjust(num & 255);
+        return `rgb(${r}, ${g}, ${b})`;
+      };
+
+      const drawPixel = (ctx2d, x, y, color, size = 1) => {
+        ctx2d.fillStyle = color;
+        ctx2d.fillRect(x, y, size, size);
+      };
+
+      const drawBorder = (ctx2d, x, y, light, dark) => {
+        ctx2d.fillStyle = light;
+        ctx2d.fillRect(x, y, 32, 1);
+        ctx2d.fillRect(x, y, 1, 32);
+        ctx2d.fillStyle = dark;
+        ctx2d.fillRect(x, y + 31, 32, 1);
+        ctx2d.fillRect(x + 31, y, 1, 32);
+      };
+
+      const drawVerticalPlankLines = (ctx2d, x, y, lineColor, highlightColor, spacing = 8) => {
+        for (let px = spacing - 1; px < 32; px += spacing) {
+          ctx2d.fillStyle = lineColor;
+          ctx2d.fillRect(x + px, y, 1, 32);
+          if (px + 1 < 32) {
+            ctx2d.fillStyle = highlightColor;
+            ctx2d.fillRect(x + px + 1, y, 1, 32);
+          }
+        }
+      };
+
+      const drawHorizontalPlankLines = (ctx2d, x, y, lineColor, highlightColor, spacing = 8) => {
+        for (let py = spacing - 1; py < 32; py += spacing) {
+          ctx2d.fillStyle = lineColor;
+          ctx2d.fillRect(x, y + py, 32, 1);
+          if (py + 1 < 32) {
+            ctx2d.fillStyle = highlightColor;
+            ctx2d.fillRect(x, y + py + 1, 32, 1);
+          }
+        }
+      };
+
+      const drawGrowthRings = (ctx2d, x, y) => {
+        const cx = x + 16;
+        const cy = y + 16;
+        const ringColors = [
+          "#d8ae70", "#c79359", "#ad7640", "#8d5b30", "#6e4321"
+        ];
+        for (let py = 0; py < 32; py += 1) {
+          for (let px = 0; px < 32; px += 1) {
+            const dx = px - 15.5;
+            const dy = py - 15.5;
+            const dist = Math.sqrt((dx * dx) + (dy * dy));
+            const wobble = hash2((px + x) * 0.3, (py + y) * 0.3) * 1.2;
+            const ring = Math.max(0, Math.min(ringColors.length - 1, Math.floor((dist + wobble) / 3.2)));
+            drawPixel(ctx2d, cx - 16 + px, cy - 16 + py, ringColors[ring]);
+          }
+        }
+        drawBorder(ctx2d, x, y, "#efc98d", "#6a421f");
+        ctx2d.strokeStyle = "#5f3a1b";
+        ctx2d.lineWidth = 1;
+        ctx2d.strokeRect(x + 4.5, y + 4.5, 23, 23);
+      };
+
+      const drawBarkTile = (ctx2d, x, y) => {
+        fillNoiseTile(ctx2d, x, y, ["#6d4525", "#7e5230", "#8a6037", "#5f391d", "#9d7448"], "stripes");
+        for (let px = 1; px < 32; px += 4) {
+          const dark = px % 8 === 1 ? "#4a2913" : "#5b351a";
+          const light = px % 8 === 1 ? "#a77a4a" : "#8e6338";
+          ctx2d.fillStyle = dark;
+          ctx2d.fillRect(x + px, y, 1, 32);
+          if (px + 1 < 32) {
+            ctx2d.fillStyle = light;
+            ctx2d.fillRect(x + px + 1, y, 1, 32);
+          }
+        }
+        for (let py = 2; py < 31; py += 6) {
+          ctx2d.fillStyle = "rgba(48, 26, 12, 0.55)";
           ctx2d.fillRect(x, y + py, 32, 1);
         }
+        drawBorder(ctx2d, x, y, "#9f7447", "#452712");
+      };
+
+      const drawGrassTopTile = (ctx2d, x, y) => {
+        for (let py = 0; py < 32; py += 1) {
+          for (let px = 0; px < 32; px += 1) {
+            const n = hash3(px * 0.5, py * 0.5, (x + y) * 0.01);
+            const stripe = Math.sin((px * 0.55) + (py * 0.35) + (n * 3.0));
+            let color = "#66bb44";
+            if (stripe > 0.55) {
+              color = "#89d45a";
+            } else if (stripe < -0.45) {
+              color = "#4f9d34";
+            } else if (n > 0.8) {
+              color = "#a4e06f";
+            }
+            drawPixel(ctx2d, x + px, y + py, color);
+          }
+        }
+        for (let i = 0; i < 60; i += 1) {
+          const px = Math.floor(hash2(i + x, i + y) * 30) + 1;
+          const py = Math.floor(hash2(i + y, i + x + 41) * 30) + 1;
+          drawPixel(ctx2d, x + px, y + py, i % 2 === 0 ? "#c4f18b" : "#3f8429");
+        }
+        drawBorder(ctx2d, x, y, "#b8ef84", "#458329");
+      };
+
+      const drawGrassSideTile = (ctx2d, x, y) => {
+        fillNoiseTile(ctx2d, x, y, ["#8b5f34", "#7a512d", "#98693b", "#6f4828", "#a87746"]);
+        for (let py = 0; py < 9; py += 1) {
+          for (let px = 0; px < 32; px += 1) {
+            const blade = hash3(px * 0.4, py * 0.4, x + y);
+            const color = blade > 0.72 ? "#9ee76e" : blade > 0.4 ? "#68be40" : "#4c9833";
+            drawPixel(ctx2d, x + px, y + py, color);
+          }
+        }
+        for (let px = 0; px < 32; px += 1) {
+          const drop = Math.floor(hash2(px + x, y) * 3);
+          drawPixel(ctx2d, x + px, y + 8 + drop, "#5a3a1f");
+        }
+        drawBorder(ctx2d, x, y, "#acd879", "#5f3b21");
+      };
+
+      const drawCraftingTopTile = (ctx2d, x, y) => {
+        fillNoiseTile(ctx2d, x, y, ["#b98148", "#a76e3f", "#ca955d", "#8d5931", "#d8ab78"]);
+        drawVerticalPlankLines(ctx2d, x, y, "#73411f", "#dcb786", 8);
+        drawHorizontalPlankLines(ctx2d, x, y, "#855229", "#c48d5a", 8);
+        ctx2d.fillStyle = "#5e3017";
+        ctx2d.fillRect(x + 11, y + 11, 10, 10);
+        ctx2d.fillStyle = "#b04b2b";
+        ctx2d.fillRect(x + 12, y + 12, 3, 3);
+        ctx2d.fillStyle = "#e3d7b7";
+        ctx2d.fillRect(x + 17, y + 12, 3, 3);
+        ctx2d.fillStyle = "#c8a162";
+        ctx2d.fillRect(x + 12, y + 17, 3, 3);
+        ctx2d.fillStyle = "#5d8d9d";
+        ctx2d.fillRect(x + 17, y + 17, 3, 3);
+        drawBorder(ctx2d, x, y, "#e0b985", "#70411f");
+      };
+
+      const drawCraftingSideTile = (ctx2d, x, y) => {
+        fillNoiseTile(ctx2d, x, y, ["#9a6336", "#ab7342", "#815129", "#bf8751", "#6e431f"]);
+        drawVerticalPlankLines(ctx2d, x, y, "#66381a", "#bf8a53", 8);
+        drawHorizontalPlankLines(ctx2d, x, y, "#764321", "#a97042", 10);
+        ctx2d.fillStyle = "#4f2913";
+        ctx2d.fillRect(x + 9, y + 8, 14, 16);
+        ctx2d.fillStyle = "#9f6c3e";
+        ctx2d.fillRect(x + 10, y + 9, 12, 14);
+        ctx2d.fillStyle = "#3a1d0f";
+        ctx2d.fillRect(x + 14, y + 11, 4, 10);
+        drawBorder(ctx2d, x, y, "#cb9964", "#5a3217");
+      };
+
+      paintTile(0, (ctx2d, x, y) => {
+        drawGrassTopTile(ctx2d, x, y);
       });
 
       paintTile(1, (ctx2d, x, y) => {
         fillNoiseTile(ctx2d, x, y, ["#764a27", "#8c5d34", "#613b1f", "#a06f41", "#996337"]);
+        drawBorder(ctx2d, x, y, "#b07c4f", "#5a3418");
       });
 
       paintTile(2, (ctx2d, x, y) => {
-        fillNoiseTile(ctx2d, x, y, ["#835730", "#94653a", "#6d4929", "#a87947", "#8b5f36"]);
-        for (let py = 0; py < 8; py += 1) {
-          ctx2d.fillStyle = ["#77cd48", "#64b53a", "#8be05b", "#59a934"][py % 4];
-          ctx2d.fillRect(x, y + py, 32, 1);
-        }
+        drawGrassSideTile(ctx2d, x, y);
       });
 
       paintTile(3, (ctx2d, x, y) => {
         fillNoiseTile(ctx2d, x, y, ["#72767d", "#8b9098", "#5d6168", "#a2a8b1", "#7f848d"]);
+        drawBorder(ctx2d, x, y, "#b9bdc3", "#4f5259");
       });
 
       paintTile(4, (ctx2d, x, y) => {
         fillNoiseTile(ctx2d, x, y, ["#313136", "#404046", "#58585f", "#212125", "#4e4e56"]);
+        drawBorder(ctx2d, x, y, "#66666d", "#1a1a1f");
       });
 
       paintTile(5, (ctx2d, x, y) => {
-        fillNoiseTile(ctx2d, x, y, ["#9b7637", "#b88d42", "#7e5d28", "#d3a755", "#a47d39"]);
+        drawGrowthRings(ctx2d, x, y);
       });
 
       paintTile(6, (ctx2d, x, y) => {
-        fillNoiseTile(ctx2d, x, y, ["#7a4d27", "#925f33", "#5f381c", "#b27a49", "#8f6037"], "stripes");
-        for (let px = 2; px < 32; px += 7) {
-          ctx2d.fillStyle = "#c58d58";
-          ctx2d.fillRect(x + px, y, 2, 32);
-        }
+        drawBarkTile(ctx2d, x, y);
       });
 
       paintTile(7, (ctx2d, x, y) => {
         fillNoiseTile(ctx2d, x, y, ["#2f7c26", "#48a238", "#215c1a", "#69c655", "#3a8e2d"], "leaf");
+        drawBorder(ctx2d, x, y, "#7cda67", "#1f4f18");
       });
 
       paintTile(8, (ctx2d, x, y) => {
         fillNoiseTile(ctx2d, x, y, ["#b97c42", "#d09358", "#9f6834", "#e3a86a", "#c68648"], "stripes");
-        for (let py = 3; py < 32; py += 8) {
-          ctx2d.fillStyle = "#f1c183";
-          ctx2d.fillRect(x, y + py, 32, 1);
-        }
+        drawHorizontalPlankLines(ctx2d, x, y, "#8e592d", "#efc183", 8);
+        drawBorder(ctx2d, x, y, "#ecc286", "#7f4d25");
       });
 
       paintTile(9, (ctx2d, x, y) => {
-        fillNoiseTile(ctx2d, x, y, ["#a46a34", "#c18646", "#7f4f26", "#d79d59", "#8f5a2b"], "stripes");
-        ctx2d.fillStyle = "#59361d";
-        ctx2d.fillRect(x + 7, y + 7, 18, 18);
-        ctx2d.fillStyle = "#7ed9e5";
-        ctx2d.fillRect(x + 10, y + 10, 12, 12);
+        drawCraftingTopTile(ctx2d, x, y);
+      });
+
+      paintTile(10, (ctx2d, x, y) => {
+        drawCraftingSideTile(ctx2d, x, y);
+      });
+
+      paintTile(11, (ctx2d, x, y) => {
+        fillNoiseTile(ctx2d, x, y, ["#a56f3b", "#ba8650", "#8e5a2f", "#cf9c69", "#774823"], "stripes");
+        drawHorizontalPlankLines(ctx2d, x, y, "#74411f", "#c28b58", 8);
+        drawBorder(ctx2d, x, y, "#d5a873", "#64391a");
+      });
+
+      paintTile(12, (ctx2d, x, y) => {
+        fillNoiseTile(ctx2d, x, y, ["#6d737b", "#838a93", "#555a62", "#9aa2aa", "#454a52"]);
+        for (let py = 0; py < 32; py += 8) {
+          ctx2d.fillStyle = py % 16 === 0 ? "#50555d" : "#aab3bc";
+          ctx2d.fillRect(x, y + py, 32, 1);
+        }
+        for (let px = 0; px < 32; px += 8) {
+          ctx2d.fillStyle = px % 16 === 0 ? "#464b53" : "#b9c1c9";
+          ctx2d.fillRect(x + px, y, 1, 32);
+        }
+        drawBorder(ctx2d, x, y, "#c0c7ce", "#333840");
+      });
+
+      paintTile(13, (ctx2d, x, y) => {
+        ctx2d.clearRect(x, y, 32, 32);
+        ctx2d.fillStyle = "#7a4b24";
+        ctx2d.fillRect(x + 13, y + 4, 6, 24);
+        ctx2d.fillStyle = "#c99058";
+        ctx2d.fillRect(x + 15, y + 5, 2, 22);
+        ctx2d.fillStyle = "#e7b77f";
+        ctx2d.fillRect(x + 16, y + 6, 1, 20);
+        for (let py = 6; py < 27; py += 5) {
+          ctx2d.fillStyle = "#8f5c31";
+          ctx2d.fillRect(x + 13, y + py, 6, 1);
+        }
+      });
+
+      paintTile(14, (ctx2d, x, y) => {
+        ctx2d.clearRect(x, y, 32, 32);
+        ctx2d.fillStyle = "#c38f5c";
+        ctx2d.fillRect(x + 8, y + 4, 18, 5);
+        ctx2d.fillRect(x + 14, y + 8, 4, 18);
+        ctx2d.fillRect(x + 9, y + 9, 5, 4);
+        ctx2d.fillRect(x + 18, y + 9, 5, 4);
+        ctx2d.fillStyle = "#8c5c34";
+        ctx2d.fillRect(x + 15, y + 9, 2, 16);
+        ctx2d.fillRect(x + 9, y + 10, 14, 1);
+        ctx2d.fillStyle = "#e4b985";
+        ctx2d.fillRect(x + 9, y + 5, 14, 1);
+        ctx2d.fillRect(x + 15, y + 9, 1, 14);
+      });
+
+      paintTile(15, (ctx2d, x, y) => {
+        ctx2d.clearRect(x, y, 32, 32);
+        ctx2d.fillStyle = "#8c959f";
+        ctx2d.fillRect(x + 8, y + 4, 18, 5);
+        ctx2d.fillRect(x + 14, y + 8, 4, 18);
+        ctx2d.fillRect(x + 9, y + 9, 5, 4);
+        ctx2d.fillRect(x + 18, y + 9, 5, 4);
+        ctx2d.fillStyle = "#606972";
+        ctx2d.fillRect(x + 15, y + 9, 2, 16);
+        ctx2d.fillRect(x + 9, y + 10, 14, 1);
+        ctx2d.fillStyle = "#d0d7de";
+        ctx2d.fillRect(x + 9, y + 5, 14, 1);
+        ctx2d.fillRect(x + 15, y + 9, 1, 14);
       });
 
       document.documentElement.style.setProperty("--atlas-url", `url("${atlas.toDataURL()}")`);
@@ -2543,8 +4688,8 @@
       }
 
       const hit = hits[0];
-      const breakPoint = hit.point.clone().addScaledVector(hit.face.normal, -0.01).floor();
-      const placePoint = hit.point.clone().addScaledVector(hit.face.normal, 0.01).floor();
+      const breakPoint = hit.point.clone().addScaledVector(hit.face.normal, -0.06).floor();
+      const placePoint = hit.point.clone().addScaledVector(hit.face.normal, 0.06).floor();
       const id = getBlock(breakPoint.x, breakPoint.y, breakPoint.z);
 
       if (id === BLOCK.AIR) {
@@ -2598,7 +4743,7 @@
       state.mining.key = state.target.key;
       state.mining.blockId = state.target.id;
       state.mining.startedAt = performance.now();
-      state.mining.duration = info.hardness * 950;
+      state.mining.duration = getMiningOutcome(state.target.id).duration;
       crackMesh.visible = true;
       crackMesh.position.copy(selectionBox.position);
       drawCrackStage(0);
@@ -2673,12 +4818,115 @@
       crackTexture.needsUpdate = true;
     }
 
+    function getSelectedItem() {
+      return state.slots[state.selectedSlot] || { id: BLOCK.AIR, count: 0 };
+    }
+
+    function getToolTier(itemId) {
+      return BLOCK_INFO[itemId]?.toolTier || 0;
+    }
+
+    function getStackLimit(itemId) {
+      return itemId === BLOCK.WOOD_PICKAXE || itemId === BLOCK.STONE_PICKAXE ? 1 : 64;
+    }
+
+    function getActiveCraftingSlots() {
+      return state.craftingMode === "table" ? state.tableCraftingSlots : state.inventoryCraftingSlots;
+    }
+
+    function openCraftingInterface(mode) {
+      state.craftingMode = mode === "table" ? "table" : "inventory";
+      setInventoryOpen(true);
+    }
+
+    function returnCraftingItemsToInventory() {
+      const slots = getActiveCraftingSlots();
+      for (const slot of slots) {
+        if (slot.id !== BLOCK.AIR && slot.count > 0) {
+          addToInventory(slot.id, slot.count);
+          slot.id = BLOCK.AIR;
+          slot.count = 0;
+        }
+      }
+      state.craftResult = getCraftingRecipe();
+    }
+
+    function countOccupiedCraftingSlots(slots) {
+      return slots.reduce((sum, slot) => sum + (slot.id !== BLOCK.AIR && slot.count > 0 ? 1 : 0), 0);
+    }
+
+    function findVerticalPlankRecipe(slots, columns) {
+      const rows = Math.ceil(slots.length / columns);
+      for (let row = 0; row < rows - 1; row += 1) {
+        for (let col = 0; col < columns; col += 1) {
+          const topIndex = (row * columns) + col;
+          const bottomIndex = ((row + 1) * columns) + col;
+          const top = slots[topIndex];
+          const bottom = slots[bottomIndex];
+          if (top?.id === BLOCK.OAK_PLANKS && top.count > 0 && bottom?.id === BLOCK.OAK_PLANKS && bottom.count > 0) {
+            const occupied = countOccupiedCraftingSlots(slots);
+            if (occupied === 2) {
+              return { id: BLOCK.STICK, count: 4, recipe: "sticks", consume: [topIndex, bottomIndex] };
+            }
+          }
+        }
+      }
+      return null;
+    }
+
+    function getMiningOutcome(blockId) {
+      const held = getSelectedItem();
+      const toolTier = getToolTier(held.id);
+
+      if (blockId === BLOCK.LEAVES) {
+        return { duration: 100, dropId: BLOCK.AIR, dropCount: 0 };
+      }
+      if (blockId === BLOCK.GRASS) {
+        return { duration: 250, dropId: BLOCK.DIRT, dropCount: 1 };
+      }
+      if (blockId === BLOCK.DIRT) {
+        return { duration: 500, dropId: BLOCK.DIRT, dropCount: 1 };
+      }
+      if (blockId === BLOCK.OAK_LOG) {
+        return { duration: 2000, dropId: BLOCK.OAK_LOG, dropCount: 1 };
+      }
+      if (blockId === BLOCK.OAK_PLANKS) {
+        return { duration: 1000, dropId: BLOCK.OAK_PLANKS, dropCount: 1 };
+      }
+      if (blockId === BLOCK.CRAFTING_TABLE) {
+        return { duration: 3000, dropId: BLOCK.CRAFTING_TABLE, dropCount: 1 };
+      }
+      if (blockId === BLOCK.STONE) {
+        if (toolTier >= 2) {
+          return { duration: 1000, dropId: BLOCK.COBBLESTONE, dropCount: 1 };
+        }
+        if (toolTier >= 1) {
+          return { duration: 2000, dropId: BLOCK.COBBLESTONE, dropCount: 1 };
+        }
+        return { duration: 10000, dropId: BLOCK.AIR, dropCount: 0 };
+      }
+      if (blockId === BLOCK.COBBLESTONE) {
+        if (toolTier >= 2) {
+          return { duration: 1000, dropId: BLOCK.COBBLESTONE, dropCount: 1 };
+        }
+        if (toolTier >= 1) {
+          return { duration: 2000, dropId: BLOCK.COBBLESTONE, dropCount: 1 };
+        }
+        return { duration: 10000, dropId: BLOCK.AIR, dropCount: 0 };
+      }
+
+      return { duration: Math.max(100, (BLOCK_INFO[blockId]?.hardness || 1) * 950), dropId: blockId, dropCount: 1 };
+    }
+
     function breakBlock(x, y, z, blockId) {
       if (blockId === BLOCK.AIR || blockId === BLOCK.BEDROCK) {
         return;
       }
 
-      addToInventory(blockId, 1);
+      const outcome = getMiningOutcome(blockId);
+      if (outcome.dropId !== BLOCK.AIR && outcome.dropCount > 0) {
+        spawnDroppedItem(x + 0.5, y + 0.35, z + 0.5, outcome.dropId, outcome.dropCount);
+      }
       setBlock(x, y, z, BLOCK.AIR);
       updateInventoryUi();
     }
@@ -2738,26 +4986,37 @@
         return false;
       }
 
+      let remaining = count;
+      const limit = getStackLimit(blockId);
+
       for (const slot of state.slots) {
-        if (slot.id === blockId && slot.count > 0) {
-          slot.count += count;
-          return true;
+        if (slot.id === blockId && slot.count > 0 && slot.count < limit) {
+          const moved = Math.min(limit - slot.count, remaining);
+          slot.count += moved;
+          remaining -= moved;
+          if (remaining <= 0) {
+            return true;
+          }
         }
       }
 
       for (const slot of state.slots) {
         if (slot.id === BLOCK.AIR || slot.count === 0) {
           slot.id = blockId;
-          slot.count = count;
-          return true;
+          slot.count = Math.min(limit, remaining);
+          remaining -= slot.count;
+          if (remaining <= 0) {
+            return true;
+          }
         }
       }
 
-      return false;
+      return remaining <= 0;
     }
 
     function getCraftingRecipe() {
-      const nonEmpty = state.craftingSlots.filter((slot) => slot.id !== BLOCK.AIR && slot.count > 0);
+      const slots = getActiveCraftingSlots();
+      const nonEmpty = slots.filter((slot) => slot.id !== BLOCK.AIR && slot.count > 0);
       if (nonEmpty.length === 0) {
         return { id: BLOCK.AIR, count: 0, recipe: "none" };
       }
@@ -2768,24 +5027,49 @@
         return { id: BLOCK.OAK_PLANKS, count: totalLogs * 4, recipe: "planks" };
       }
 
-      const exactPlankPattern = state.craftingSlots.every((slot) => slot.id === BLOCK.OAK_PLANKS && slot.count > 0);
-      if (exactPlankPattern) {
-        return { id: BLOCK.CRAFTING_TABLE, count: 1, recipe: "crafting_table" };
+      const stickRecipe = findVerticalPlankRecipe(slots, state.craftingMode === "table" ? 3 : 2);
+      if (stickRecipe) {
+        return stickRecipe;
+      }
+
+      if (state.craftingMode === "inventory") {
+        const exactPlankPattern = slots.every((slot) => slot.id === BLOCK.OAK_PLANKS && slot.count > 0);
+        if (exactPlankPattern) {
+          return { id: BLOCK.CRAFTING_TABLE, count: 1, recipe: "crafting_table" };
+        }
+      }
+
+      if (state.craftingMode === "table") {
+        const topA = slots[0];
+        const topB = slots[1];
+        const topC = slots[2];
+        const mid = slots[4];
+        const low = slots[7];
+        const occupied = countOccupiedCraftingSlots(slots);
+        if (occupied === 5 && mid?.id === BLOCK.STICK && low?.id === BLOCK.STICK && topA?.count > 0 && topB?.count > 0 && topC?.count > 0) {
+          if (topA.id === BLOCK.OAK_PLANKS && topB.id === BLOCK.OAK_PLANKS && topC.id === BLOCK.OAK_PLANKS) {
+            return { id: BLOCK.WOOD_PICKAXE, count: 1, recipe: "wood_pickaxe" };
+          }
+          if (topA.id === BLOCK.COBBLESTONE && topB.id === BLOCK.COBBLESTONE && topC.id === BLOCK.COBBLESTONE) {
+            return { id: BLOCK.STONE_PICKAXE, count: 1, recipe: "stone_pickaxe" };
+          }
+        }
       }
 
       return { id: BLOCK.AIR, count: 0, recipe: "none" };
     }
 
     function consumeCraftingRecipe(recipeName) {
+      const slots = getActiveCraftingSlots();
       if (recipeName === "planks") {
-        state.craftingSlots.forEach((slot) => {
+        slots.forEach((slot) => {
           slot.id = BLOCK.AIR;
           slot.count = 0;
         });
       }
 
       if (recipeName === "crafting_table") {
-        for (const slot of state.craftingSlots) {
+        for (const slot of slots) {
           if (slot.id !== BLOCK.OAK_PLANKS) {
             continue;
           }
@@ -2795,6 +5079,35 @@
             slot.count = 0;
           }
         }
+      }
+
+      if (recipeName === "sticks") {
+        const recipe = getCraftingRecipe();
+        (recipe.consume || []).forEach((index) => {
+          const slot = slots[index];
+          if (!slot || slot.id !== BLOCK.OAK_PLANKS) {
+            return;
+          }
+          slot.count -= 1;
+          if (slot.count <= 0) {
+            slot.id = BLOCK.AIR;
+            slot.count = 0;
+          }
+        });
+      }
+
+      if (recipeName === "wood_pickaxe" || recipeName === "stone_pickaxe") {
+        [0, 1, 2, 4, 7].forEach((index) => {
+          const slot = slots[index];
+          if (!slot || slot.id === BLOCK.AIR) {
+            return;
+          }
+          slot.count -= 1;
+          if (slot.count <= 0) {
+            slot.id = BLOCK.AIR;
+            slot.count = 0;
+          }
+        });
       }
 
       state.craftResult = getCraftingRecipe();
@@ -2807,6 +5120,8 @@
       bottomBar.classList.toggle("inventory-hidden", !state.inventoryOpen);
       bottomBar.classList.toggle("inventory-open", state.inventoryOpen);
       state.craftResult = getCraftingRecipe();
+      craftingTitleEl.textContent = state.craftingMode === "table" ? "crafting table" : "crafting";
+      craftingGridEl.classList.toggle("workbench", state.craftingMode === "table");
 
       state.slots.slice(0, 10).forEach((slot, index) => {
         hotbarEl.appendChild(makeSlot(slot, "inventory", index, index === state.selectedSlot));
@@ -2816,11 +5131,12 @@
         inventoryGridEl.appendChild(makeSlot(slot, "inventory", index + 10, false));
       });
 
-      state.craftingSlots.forEach((slot, index) => {
+      getActiveCraftingSlots().forEach((slot, index) => {
         craftingGridEl.appendChild(makeSlot(slot, "crafting", index, false));
       });
 
       renderCraftResultSlot();
+      updateHeldItemUi();
     }
 
     function makeSlot(slot, slotType, index, active) {
@@ -2847,11 +5163,21 @@
 
       div.addEventListener("pointerdown", (event) => {
         if (!state.inventoryOpen) {
+          if (isMobileDevice && slotType === "inventory" && index < 10) {
+            event.preventDefault();
+            state.selectedSlot = index;
+            updateInventoryUi();
+          }
           return;
         }
 
         event.preventDefault();
-        if (state.drag.active && (event.button === 2 || event.pointerType === "touch")) {
+        if (state.drag.active && event.pointerType === "touch") {
+          dropOneToSlot(slotType, index);
+          return;
+        }
+
+        if (state.drag.active && event.button === 2) {
           dropOneToSlot(slotType, index);
           return;
         }
@@ -2877,6 +5203,232 @@
       icon.style.backgroundSize = `${size * 4}px ${size * 4}px`;
       icon.style.backgroundPosition = `${-tileX * size}px ${-tileY * size}px`;
       return icon;
+    }
+
+    function isToolItem(blockId) {
+      return blockId === BLOCK.STICK || blockId === BLOCK.WOOD_PICKAXE || blockId === BLOCK.STONE_PICKAXE;
+    }
+
+    function getTileTexture(tileIndex) {
+      if (tileTextureCache.has(tileIndex)) {
+        return tileTextureCache.get(tileIndex);
+      }
+
+      const texture = new THREE.CanvasTexture(getTileCanvas(tileIndex));
+      texture.magFilter = THREE.NearestFilter;
+      texture.minFilter = THREE.NearestFilter;
+      texture.generateMipmaps = false;
+      texture.needsUpdate = true;
+      tileTextureCache.set(tileIndex, texture);
+      return texture;
+    }
+
+    function getTileCanvas(tileIndex) {
+      if (tileCanvasCache.has(tileIndex)) {
+        return tileCanvasCache.get(tileIndex);
+      }
+
+      const tileX = tileIndex % 4;
+      const tileY = Math.floor(tileIndex / 4);
+      const iconCanvas = document.createElement("canvas");
+      iconCanvas.width = 32;
+      iconCanvas.height = 32;
+      const ctx = iconCanvas.getContext("2d");
+      ctx.imageSmoothingEnabled = false;
+      ctx.clearRect(0, 0, 32, 32);
+      ctx.drawImage(blockTexture.image, tileX * 32, tileY * 32, 32, 32, 0, 0, 32, 32);
+      tileCanvasCache.set(tileIndex, iconCanvas);
+      return iconCanvas;
+    }
+
+    function createItemPreview(container, width, height, mode) {
+      const renderer3d = new THREE.WebGLRenderer({ alpha: true, antialias: false, powerPreference: "high-performance" });
+      renderer3d.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer3d.setSize(width, height);
+      renderer3d.setClearColor(0x000000, 0);
+      container.innerHTML = "";
+      container.appendChild(renderer3d.domElement);
+
+      const previewScene = new THREE.Scene();
+      const previewCamera = new THREE.PerspectiveCamera(mode === "held" ? 34 : 38, width / height, 0.1, 24);
+      previewCamera.position.set(0, 0.2, mode === "held" ? 5.2 : 4.2);
+      const ambient = new THREE.AmbientLight(0xffffff, 1.75);
+      const key = new THREE.DirectionalLight(0xffffff, 1.45);
+      key.position.set(3.8, 5.1, 5.4);
+      const fill = new THREE.DirectionalLight(0xa4bee9, 0.6);
+      fill.position.set(-2.8, 2.9, 3.1);
+      previewScene.add(ambient, key, fill);
+
+      const root = new THREE.Group();
+      previewScene.add(root);
+
+      return {
+        container,
+        renderer: renderer3d,
+        scene: previewScene,
+        camera: previewCamera,
+        root,
+        mode,
+        mesh: null,
+        itemId: BLOCK.AIR
+      };
+    }
+
+    function resizeItemPreview(preview, width, height) {
+      if (!preview) {
+        return;
+      }
+      preview.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      preview.renderer.setSize(width, height);
+      preview.camera.aspect = width / height;
+      preview.camera.updateProjectionMatrix();
+    }
+
+    function createItemMaterial(options = {}) {
+      const { map = null, color = 0xffffff, unlit = false, shade = 1 } = options;
+      if (unlit) {
+        return new THREE.MeshBasicMaterial({ map, color });
+      }
+      return new THREE.MeshLambertMaterial({ map, color, emissive: tempColor.set(color).multiplyScalar(0.18 * shade) });
+    }
+
+    function createBlockFaceMaterials(blockId, mode = "preview") {
+      const unlit = mode === "world";
+      const sideTexture = getTileTexture(getBlockTile(blockId, 0));
+      const topTexture = getTileTexture(getBlockTile(blockId, 2));
+      const bottomTexture = getTileTexture(getBlockTile(blockId, 3));
+      return [
+        createItemMaterial({ map: sideTexture, unlit }),
+        createItemMaterial({ map: sideTexture, unlit }),
+        createItemMaterial({ map: topTexture, unlit }),
+        createItemMaterial({ map: bottomTexture, unlit }),
+        createItemMaterial({ map: sideTexture, unlit }),
+        createItemMaterial({ map: sideTexture, unlit })
+      ];
+    }
+
+    function createBlockItemMesh(blockId, size = 1, mode = "preview") {
+      return new THREE.Mesh(new THREE.BoxGeometry(size, size, size), createBlockFaceMaterials(blockId, mode));
+    }
+
+    function addBoxPart(group, width, height, depth, color, x, y, z, rotZ = 0, unlit = false) {
+      const mesh = new THREE.Mesh(
+        new THREE.BoxGeometry(width, height, depth),
+        createItemMaterial({ color, unlit })
+      );
+      mesh.position.set(x, y, z);
+      mesh.rotation.z = rotZ;
+      group.add(mesh);
+      return mesh;
+    }
+
+    function createVoxelSpriteItemMesh(blockId, mode = "preview") {
+      const tileCanvas = getTileCanvas(getBlockTile(blockId, 2));
+      const ctx = tileCanvas.getContext("2d");
+      const pixels = ctx.getImageData(0, 0, 32, 32).data;
+      const group = new THREE.Group();
+      const pixelSize = 0.08;
+      const depth = 0.1;
+      const zOffset = depth * 0.14;
+      const unlit = mode === "world";
+
+      for (let py = 0; py < 32; py += 1) {
+        for (let px = 0; px < 32; px += 1) {
+          const index = ((py * 32) + px) * 4;
+          const alpha = pixels[index + 3];
+          if (alpha < 20) {
+            continue;
+          }
+
+          tempColor.setRGB(pixels[index] / 255, pixels[index + 1] / 255, pixels[index + 2] / 255);
+          const front = createItemMaterial({ color: tempColor.clone(), unlit, shade: 1 });
+          const side = createItemMaterial({ color: tempColor.clone().multiplyScalar(0.82), unlit, shade: 0.8 });
+          const box = new THREE.Mesh(
+            new THREE.BoxGeometry(pixelSize, pixelSize, depth),
+            [side, side, side, side, front, front]
+          );
+          box.position.set((px - 15.5) * pixelSize, (15.5 - py) * pixelSize, zOffset);
+          group.add(box);
+        }
+      }
+
+      return group;
+    }
+
+    function createToolItemMesh(blockId, mode = "preview") {
+      return createVoxelSpriteItemMesh(blockId, mode);
+    }
+
+    function createItemDisplayMesh(blockId, mode = "preview") {
+      let mesh = null;
+      if (isToolItem(blockId)) {
+        mesh = createToolItemMesh(blockId, mode);
+      } else {
+        const scale = mode === "world" ? 0.34 : 1;
+        mesh = createBlockItemMesh(blockId, scale, mode);
+      }
+
+      if (mode === "world") {
+        if (isToolItem(blockId)) {
+          mesh.scale.setScalar(0.16);
+        }
+        mesh.rotation.x = -0.42;
+        mesh.rotation.y = 0.58;
+      } else if (mode === "drag") {
+        mesh.rotation.x = -0.22;
+        mesh.rotation.y = -0.62;
+      } else {
+        mesh.rotation.x = -0.26;
+        mesh.rotation.y = -0.82;
+        mesh.rotation.z = 0.08;
+      }
+
+      return mesh;
+    }
+
+    function fitPreviewMesh(mesh, mode) {
+      const box = new THREE.Box3().setFromObject(mesh);
+      const size = box.getSize(new THREE.Vector3());
+      const maxSize = Math.max(size.x, size.y, size.z, 0.001);
+      const target = mode === "held" ? 2.65 : 2.05;
+      const scale = target / maxSize;
+      mesh.scale.multiplyScalar(scale);
+      const centeredBox = new THREE.Box3().setFromObject(mesh);
+      const center = centeredBox.getCenter(new THREE.Vector3());
+      mesh.position.sub(center);
+      mesh.position.y += mode === "held" ? -0.02 : 0.01;
+    }
+
+    function setPreviewItem(preview, blockId) {
+      if (!preview) {
+        return;
+      }
+      preview.root.clear();
+      preview.mesh = null;
+      preview.itemId = blockId;
+      if (blockId === BLOCK.AIR) {
+        return;
+      }
+
+      const mesh = createItemDisplayMesh(blockId, preview.mode);
+      fitPreviewMesh(mesh, preview.mode);
+      preview.root.add(mesh);
+      preview.mesh = mesh;
+    }
+
+    function renderItemPreview(preview, delta) {
+      if (!preview || !preview.mesh) {
+        return;
+      }
+      preview.renderer.render(preview.scene, preview.camera);
+    }
+
+    function updateHeldItemUi() {
+      const selected = getSelectedItem();
+      const info = BLOCK_INFO[selected.id];
+      const shouldShow = selected && selected.count > 0 && info && !state.inventoryOpen;
+      heldItemEl.classList.toggle("hidden", !shouldShow);
+      setPreviewItem(heldPreview, shouldShow ? selected.id : BLOCK.AIR);
     }
 
     function renderCraftResultSlot() {
@@ -2913,7 +5465,7 @@
         return state.slots;
       }
       if (slotType === "crafting") {
-        return state.craftingSlots;
+        return getActiveCraftingSlots();
       }
       return null;
     }
@@ -2953,6 +5505,10 @@
         if (state.drag.stack.id !== result.id) {
           return;
         }
+        const limit = getStackLimit(result.id);
+        if (state.drag.stack.count + result.count > limit) {
+          return;
+        }
         state.drag.stack.count += result.count;
       } else {
         state.drag.active = true;
@@ -2981,12 +5537,24 @@
 
       const target = store[index];
       const held = state.drag.stack;
+      const limit = getStackLimit(held.id);
 
       if (target.id === BLOCK.AIR || target.count <= 0) {
         target.id = held.id;
         target.count = held.count;
       } else if (target.id === held.id) {
-        target.count += held.count;
+        const moved = Math.min(limit - target.count, held.count);
+        if (moved <= 0) {
+          return;
+        }
+        target.count += moved;
+        held.count -= moved;
+        if (held.count > 0) {
+          state.craftResult = getCraftingRecipe();
+          updateInventoryUi();
+          updateDragGhost();
+          return;
+        }
       } else {
         const swap = { id: target.id, count: target.count };
         target.id = held.id;
@@ -3017,6 +5585,10 @@
 
       const target = store[index];
       if (target.id !== BLOCK.AIR && target.id !== state.drag.stack.id) {
+        return;
+      }
+      const limit = getStackLimit(state.drag.stack.id);
+      if (target.id === state.drag.stack.id && target.count >= limit) {
         return;
       }
 
@@ -3058,22 +5630,27 @@
       state.drag.pointerType = "mouse";
       state.drag.stack = { id: BLOCK.AIR, count: 0 };
       dragGhost.classList.add("hidden");
+      setPreviewItem(dragPreview, BLOCK.AIR);
+      dragGhost.querySelector(".slot-count")?.remove();
     }
 
     function updateDragGhost() {
       if (!state.drag.active || state.drag.stack.id === BLOCK.AIR || state.drag.stack.count <= 0) {
         dragGhost.classList.add("hidden");
+        setPreviewItem(dragPreview, BLOCK.AIR);
+        dragGhost.querySelector(".slot-count")?.remove();
         return;
       }
 
       dragGhost.classList.remove("hidden");
       dragGhost.style.left = `${state.drag.mouseX}px`;
       dragGhost.style.top = `${state.drag.mouseY}px`;
-      dragGhost.innerHTML = "";
-      dragGhost.appendChild(makeBlockIcon(state.drag.stack.id, 36));
+      setPreviewItem(dragPreview, state.drag.stack.id);
       const count = document.createElement("div");
       count.className = "slot-count";
       count.textContent = String(state.drag.stack.count);
+      const existingCount = dragGhost.querySelector(".slot-count");
+      existingCount?.remove();
       dragGhost.appendChild(count);
     }
 
@@ -3118,6 +5695,8 @@
         document.exitPointerLock?.();
       } else {
         clearDrag(true);
+        returnCraftingItemsToInventory();
+        state.craftingMode = "inventory";
         lastPointerMoveAt = performance.now();
       }
 
@@ -3132,6 +5711,7 @@
 
       if (nextPaused) {
         setInventoryOpen(false);
+        closeSettingsMenus();
       }
 
       state.paused = nextPaused;
@@ -3157,6 +5737,7 @@
 
       state.paused = false;
       setInventoryOpen(false);
+      closeSettingsMenus();
       state.started = false;
       state.keys.clear();
       pauseMenu.classList.add("hidden");
@@ -3164,8 +5745,92 @@
       screen.classList.remove("hidden");
       mainMenu.classList.remove("hidden");
       worldMenu.classList.add("hidden");
+      chatMenu.classList.add("hidden");
       document.exitPointerLock?.();
       statusText.textContent = "";
+    }
+
+    function createDroppedItemMesh(blockId) {
+      const mesh = createItemDisplayMesh(blockId, "world");
+      const bounds = new THREE.Box3().setFromObject(mesh);
+      const size = bounds.getSize(new THREE.Vector3());
+      mesh.userData.halfHeight = Math.max(0.08, size.y * 0.5);
+      return mesh;
+    }
+
+    function getDropFloorY(x, y, z, halfHeight) {
+      const testX = Math.floor(x);
+      const testZ = Math.floor(z);
+      const startY = Math.max(0, Math.min(WORLD_HEIGHT - 1, Math.floor(y)));
+
+      for (let testY = startY; testY >= 0; testY -= 1) {
+        if (isSolid(getBlock(testX, testY, testZ))) {
+          return testY + 1 + halfHeight;
+        }
+      }
+
+      return halfHeight;
+    }
+
+    function spawnDroppedItem(x, y, z, blockId, count) {
+      const mesh = createDroppedItemMesh(blockId);
+      mesh.position.set(x, y, z);
+      scene.add(mesh);
+      state.droppedItems.push({
+        id: blockId,
+        count,
+        mesh,
+        halfHeight: mesh.userData.halfHeight || 0.12,
+        age: 0,
+        vy: 0.2,
+        vx: (Math.random() - 0.5) * 0.6,
+        vz: (Math.random() - 0.5) * 0.6,
+        spin: (Math.random() * 1.4) + 0.6
+      });
+    }
+
+    function updateDroppedItems(delta) {
+      const remaining = [];
+      for (const drop of state.droppedItems) {
+        drop.age += delta;
+        const dx = state.player.position.x - drop.mesh.position.x;
+        const dy = (state.player.position.y + 0.6) - drop.mesh.position.y;
+        const dz = state.player.position.z - drop.mesh.position.z;
+        const dist = Math.sqrt((dx * dx) + (dy * dy) + (dz * dz));
+
+        if (dist < 1.2) {
+          const speed = Math.max(10, dist / 0.1);
+          drop.mesh.position.x += (dx / Math.max(dist, 0.001)) * speed * delta;
+          drop.mesh.position.y += (dy / Math.max(dist, 0.001)) * speed * delta;
+          drop.mesh.position.z += (dz / Math.max(dist, 0.001)) * speed * delta;
+        } else {
+          const floorY = getDropFloorY(drop.mesh.position.x, drop.mesh.position.y, drop.mesh.position.z, drop.halfHeight);
+          drop.mesh.position.x += drop.vx * delta;
+          drop.mesh.position.z += drop.vz * delta;
+          drop.vx *= 0.92;
+          drop.vz *= 0.92;
+          drop.vy -= 13.5 * delta;
+          const nextY = drop.mesh.position.y + (drop.vy * delta);
+          if (nextY <= floorY) {
+            drop.mesh.position.y = floorY;
+            drop.vy = 0;
+          } else {
+            drop.mesh.position.y = nextY;
+          }
+        }
+
+        drop.mesh.rotation.y += delta * drop.spin;
+
+        if (dist < 0.45 && addToInventory(drop.id, drop.count)) {
+          scene.remove(drop.mesh);
+          updateInventoryUi();
+          continue;
+        }
+
+        remaining.push(drop);
+      }
+
+      state.droppedItems = remaining;
     }
 
     function shatterMenu(menu) {
