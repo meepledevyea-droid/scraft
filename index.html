@@ -613,6 +613,13 @@
       align-items: center;
       gap: 12px;
       width: min(92vw, 900px);
+      pointer-events: auto;
+    }
+
+    .hotbar,
+    .hotbar * {
+      pointer-events: auto;
+      touch-action: none;
     }
 
     .bottom-bar.inventory-hidden .inventory-wrap {
@@ -777,6 +784,9 @@
       justify-content: center;
       text-align: center;
       padding: 6px;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none;
     }
 
     .slot.active {
@@ -887,7 +897,7 @@
     .joystick {
       position: absolute;
       left: 18px;
-      bottom: 24px;
+      bottom: 156px;
       width: 132px;
       height: 132px;
       border-radius: 50%;
@@ -911,7 +921,7 @@
     .mobile-buttons {
       position: absolute;
       right: 18px;
-      bottom: 24px;
+      bottom: 156px;
       display: grid;
       grid-template-columns: repeat(2, minmax(74px, 1fr));
       gap: 10px;
@@ -927,13 +937,16 @@
       font: inherit;
       text-transform: lowercase;
       touch-action: none;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none;
     }
 
     .mobile-tip {
       position: absolute;
       left: 18px;
       right: 18px;
-      bottom: 172px;
+      bottom: 302px;
       text-align: center;
       background: rgba(0, 0, 0, 0.34);
       border: 1px solid rgba(255, 255, 255, 0.1);
@@ -1024,6 +1037,10 @@
       .chat-add-row,
       .chat-send-row {
         grid-template-columns: 1fr;
+      }
+
+      .joystick {
+        bottom: 156px;
       }
     }
 
@@ -1435,6 +1452,11 @@
         sourceIndex: -1,
         sourceType: "inventory",
         pointerType: "mouse",
+        pointerId: null,
+        lastTouchDropSlot: null,
+        lastTouchTapSlot: null,
+        lastTouchTapAt: 0,
+        touchCommitTimer: null,
         stack: { id: BLOCK.AIR, count: 0 },
         mouseX: 0,
         mouseY: 0
@@ -2465,6 +2487,22 @@
       return data;
     }
 
+    function formatCloudScriptError(functionName, rawMessage) {
+      const message = String(rawMessage || "").trim();
+      const lowered = message.toLowerCase();
+      if (
+        lowered.includes("couldn't find") ||
+        lowered.includes("could not find") ||
+        lowered.includes("no function named") ||
+        lowered.includes("not find function") ||
+        lowered.includes("not found") ||
+        lowered.includes("command")
+      ) {
+        return `playfab cloudscript is missing the ${functionName} function`;
+      }
+      return message || `playfab cloudscript failed while calling ${functionName}`;
+    }
+
     async function executeCloudScript(functionName, functionParameter = {}) {
       const result = await playFabCall("Client/ExecuteCloudScript", {
         FunctionName: functionName,
@@ -2474,7 +2512,7 @@
 
       const payload = result?.data?.FunctionResult;
       if (result?.data?.Error || payload?.error) {
-        throw new Error(payload?.error || result.data.Error?.Message || "cloudscript call failed");
+        throw new Error(formatCloudScriptError(functionName, payload?.error || result?.data?.Error?.Message || ""));
       }
 
       return payload || {};
@@ -2863,7 +2901,18 @@
 
       chatStatus.textContent = `starting a chat with ${targetUsername}`;
       try {
-        const payload = await executeCloudScript(PLAYFAB_CHAT_START_FUNCTION, { targetUsername });
+        const accountInfo = await playFabCall("Client/GetAccountInfo", {
+          Username: targetUsername
+        }, true);
+        const targetPlayFabId = accountInfo?.data?.AccountInfo?.PlayFabId || "";
+        if (!targetPlayFabId) {
+          throw new Error(`${targetUsername} could not be found`);
+        }
+
+        const payload = await executeCloudScript(PLAYFAB_CHAT_START_FUNCTION, {
+          targetUsername,
+          targetPlayFabId
+        });
         const chatMeta = normalizeChatMeta(payload?.chat || payload, 0);
         if (!chatMeta) {
           throw new Error("chat could not be created");
@@ -3350,7 +3399,7 @@
     }
 
     function onUiPointerMove(event) {
-      if (!state.drag.active) {
+      if (!state.drag.active || state.drag.pointerType === "touch" || (state.drag.pointerId !== null && event.pointerId !== state.drag.pointerId)) {
         return;
       }
 
@@ -3364,18 +3413,20 @@
         return;
       }
 
+      if (state.drag.pointerId !== null && event.pointerId !== state.drag.pointerId) {
+        return;
+      }
+
+      if ((event.pointerType || state.drag.pointerType) === "touch" || state.drag.pointerType === "touch") {
+        return;
+      }
+
       const element = document.elementFromPoint(event.clientX, event.clientY);
       const slotElement = element ? element.closest("[data-slot-index]") : null;
       if (slotElement) {
         const slotType = slotElement.dataset.slotType || "inventory";
         const slotIndex = Number(slotElement.dataset.slotIndex);
-        if ((event.pointerType || state.drag.pointerType) === "touch" || state.drag.pointerType === "touch") {
-          if (slotType === "craft-result") {
-            takeCraftResult(event.clientX, event.clientY, event.pointerType || "touch");
-          } else {
-            dropDrag(slotType, slotIndex);
-          }
-        } else if (slotType === "craft-result") {
+        if (slotType === "craft-result") {
           takeCraftResult(event.clientX, event.clientY, event.pointerType || "mouse");
         } else {
           dropDrag(slotType, slotIndex);
@@ -3407,6 +3458,22 @@
 
     function setupMobileControls() {
       mobileControls.classList.remove("hidden");
+
+      const bindMobileButton = (element, handlers) => {
+        element.addEventListener("pointerdown", (event) => {
+          event.preventDefault();
+          element.setPointerCapture?.(event.pointerId);
+          handlers.down?.(event);
+        });
+        element.addEventListener("pointerup", (event) => {
+          event.preventDefault();
+          handlers.up?.(event);
+        });
+        element.addEventListener("pointercancel", (event) => {
+          event.preventDefault();
+          handlers.cancel?.(event);
+        });
+      };
 
       moveStick.addEventListener("pointerdown", (event) => {
         if (state.paused) {
@@ -3482,43 +3549,52 @@
       lookPad.addEventListener("pointerup", endLook);
       lookPad.addEventListener("pointercancel", endLook);
 
-      document.getElementById("mobileJumpBtn").addEventListener("pointerdown", (event) => {
-        event.preventDefault();
-        state.mobile.jumpHeld = true;
-      });
-      document.getElementById("mobileJumpBtn").addEventListener("pointerup", () => {
-        state.mobile.jumpHeld = false;
-      });
-      document.getElementById("mobileJumpBtn").addEventListener("pointercancel", () => {
-        state.mobile.jumpHeld = false;
-      });
-
-      document.getElementById("mobileBreakBtn").addEventListener("pointerdown", (event) => {
-        event.preventDefault();
-        if (!state.paused && !state.inventoryOpen) {
-          beginMining();
-        }
-      });
-      document.getElementById("mobileBreakBtn").addEventListener("pointerup", stopMining);
-      document.getElementById("mobileBreakBtn").addEventListener("pointercancel", stopMining);
-
-      document.getElementById("mobilePlaceBtn").addEventListener("pointerdown", (event) => {
-        event.preventDefault();
-        if (!state.paused && !state.inventoryOpen) {
-          placeSelectedBlock();
+      bindMobileButton(document.getElementById("mobileJumpBtn"), {
+        down: () => {
+          state.mobile.jumpHeld = true;
+        },
+        up: () => {
+          state.mobile.jumpHeld = false;
+        },
+        cancel: () => {
+          state.mobile.jumpHeld = false;
         }
       });
 
-      document.getElementById("mobileInventoryBtn").addEventListener("pointerdown", (event) => {
-        event.preventDefault();
-        if (!state.paused) {
-          setInventoryOpen(!state.inventoryOpen);
+      bindMobileButton(document.getElementById("mobileBreakBtn"), {
+        down: () => {
+          if (!state.paused && !state.inventoryOpen) {
+            beginMining();
+          }
+        },
+        up: () => {
+          stopMining();
+        },
+        cancel: () => {
+          stopMining();
         }
       });
 
-      document.getElementById("mobileMenuBtn").addEventListener("pointerdown", (event) => {
-        event.preventDefault();
-        setPaused(!state.paused);
+      bindMobileButton(document.getElementById("mobilePlaceBtn"), {
+        down: () => {
+          if (!state.paused && !state.inventoryOpen) {
+            placeSelectedBlock();
+          }
+        }
+      });
+
+      bindMobileButton(document.getElementById("mobileInventoryBtn"), {
+        down: () => {
+          if (!state.paused) {
+            setInventoryOpen(!state.inventoryOpen);
+          }
+        }
+      });
+
+      bindMobileButton(document.getElementById("mobileMenuBtn"), {
+        down: () => {
+          setPaused(!state.paused);
+        }
       });
     }
 
@@ -5156,8 +5232,8 @@
         }
 
         event.preventDefault();
-        if (state.drag.active && event.pointerType === "touch") {
-          dropOneToSlot(slotType, index);
+        if (event.pointerType === "touch") {
+          handleMobileInventoryTap(slotType, index, event.clientX, event.clientY, event.pointerId);
           return;
         }
 
@@ -5170,7 +5246,7 @@
           return;
         }
 
-        beginDrag(slotType, index, event.clientX, event.clientY, event.pointerType || "mouse");
+        beginDrag(slotType, index, event.clientX, event.clientY, event.pointerType || "mouse", event.pointerId);
       });
 
       return div;
@@ -5454,7 +5530,7 @@
       return null;
     }
 
-    function beginDrag(slotType, index, mouseX, mouseY, pointerType) {
+    function beginDrag(slotType, index, mouseX, mouseY, pointerType, pointerId = null) {
       const store = getSlotStore(slotType);
       if (!store) {
         return;
@@ -5469,6 +5545,11 @@
       state.drag.sourceIndex = index;
       state.drag.sourceType = slotType;
       state.drag.pointerType = pointerType;
+      state.drag.pointerId = pointerId;
+      state.drag.lastTouchDropSlot = null;
+      state.drag.lastTouchTapSlot = null;
+      state.drag.lastTouchTapAt = 0;
+      clearTouchCommitTimer();
       state.drag.stack = { id: slot.id, count: slot.count };
       state.drag.mouseX = mouseX;
       state.drag.mouseY = mouseY;
@@ -5477,6 +5558,56 @@
       state.craftResult = getCraftingRecipe();
       updateInventoryUi();
       updateDragGhost();
+    }
+
+    function clearTouchCommitTimer() {
+      if (state.drag.touchCommitTimer) {
+        clearTimeout(state.drag.touchCommitTimer);
+        state.drag.touchCommitTimer = null;
+      }
+    }
+
+    function handleMobileInventoryTap(slotType, index, clientX, clientY, pointerId) {
+      const now = performance.now();
+      const tapKey = `${slotType}:${index}`;
+
+      if (slotType === "craft-result") {
+        takeCraftResult(clientX, clientY, "touch");
+        return;
+      }
+
+      if (!state.drag.active) {
+        beginDrag(slotType, index, clientX, clientY, "touch", pointerId);
+        return;
+      }
+
+      const isDoubleTap = state.drag.lastTouchTapSlot === tapKey && (now - state.drag.lastTouchTapAt) < 320;
+      state.drag.mouseX = clientX;
+      state.drag.mouseY = clientY;
+
+      if (isDoubleTap) {
+        clearTouchCommitTimer();
+        state.drag.lastTouchTapSlot = null;
+        state.drag.lastTouchTapAt = 0;
+        dropOneToSlot(slotType, index);
+        return;
+      }
+
+      clearTouchCommitTimer();
+      state.drag.lastTouchTapSlot = tapKey;
+      state.drag.lastTouchTapAt = now;
+      state.drag.touchCommitTimer = setTimeout(() => {
+        state.drag.touchCommitTimer = null;
+        if (!state.drag.active || state.drag.pointerType !== "touch") {
+          return;
+        }
+        if (state.drag.lastTouchTapSlot !== tapKey) {
+          return;
+        }
+        state.drag.lastTouchTapSlot = null;
+        state.drag.lastTouchTapAt = 0;
+        dropDrag(slotType, index);
+      }, 240);
     }
 
     function takeCraftResult(mouseX, mouseY, pointerType) {
@@ -5612,6 +5743,11 @@
       state.drag.sourceIndex = -1;
       state.drag.sourceType = "inventory";
       state.drag.pointerType = "mouse";
+      state.drag.pointerId = null;
+      state.drag.lastTouchDropSlot = null;
+      state.drag.lastTouchTapSlot = null;
+      state.drag.lastTouchTapAt = 0;
+      clearTouchCommitTimer();
       state.drag.stack = { id: BLOCK.AIR, count: 0 };
       dragGhost.classList.add("hidden");
       setPreviewItem(dragPreview, BLOCK.AIR);
