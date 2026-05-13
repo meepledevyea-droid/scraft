@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Shitcraft</title>
+  <title>Scraft</title>
   <style>
     :root {
       --bg-top: #8b8b8b;
@@ -604,6 +604,74 @@
       color: #d3f1ff;
     }
 
+    .heart-row {
+      align-self: flex-start;
+      display: grid;
+      grid-template-columns: repeat(10, 22px);
+      gap: 4px;
+      padding: 2px 2px 0;
+    }
+
+    .heart {
+      width: 22px;
+      height: 20px;
+      position: relative;
+      filter: drop-shadow(1px 2px 0 rgba(0, 0, 0, 0.45));
+    }
+
+    .heart::before,
+    .heart::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-repeat: no-repeat;
+      image-rendering: pixelated;
+    }
+
+    .heart::before {
+      background:
+        radial-gradient(circle at 32% 30%, #ffffff 0 16%, transparent 17%),
+        radial-gradient(circle at 68% 30%, #ffffff 0 16%, transparent 17%),
+        linear-gradient(135deg, transparent 0 38%, #ffffff 39% 100%),
+        linear-gradient(225deg, transparent 0 38%, #ffffff 39% 100%);
+      opacity: 0.18;
+    }
+
+    .heart::after {
+      background:
+        radial-gradient(circle at 32% 30%, var(--heart-color, #b51b28) 0 26%, transparent 27%),
+        radial-gradient(circle at 68% 30%, var(--heart-color, #b51b28) 0 26%, transparent 27%),
+        linear-gradient(135deg, transparent 0 35%, var(--heart-color, #b51b28) 36% 100%),
+        linear-gradient(225deg, transparent 0 35%, var(--heart-color, #b51b28) 36% 100%);
+      clip-path: polygon(50% 100%, 6% 58%, 6% 24%, 22% 8%, 40% 8%, 50% 20%, 60% 8%, 78% 8%, 94% 24%, 94% 58%);
+    }
+
+    .heart.empty::after {
+      --heart-color: #2d2d2d;
+      opacity: 0.75;
+    }
+
+    .heart.half::before {
+      opacity: 0.1;
+    }
+
+    .heart.half::after {
+      background:
+        linear-gradient(90deg, #cf2a3c 0 50%, #2d2d2d 50% 100%);
+      mask:
+        radial-gradient(circle at 32% 30%, #000 0 26%, transparent 27%),
+        radial-gradient(circle at 68% 30%, #000 0 26%, transparent 27%),
+        linear-gradient(135deg, transparent 0 35%, #000 36% 100%),
+        linear-gradient(225deg, transparent 0 35%, #000 36% 100%);
+      mask-composite: add;
+      -webkit-mask:
+        radial-gradient(circle at 32% 30%, #000 0 26%, transparent 27%),
+        radial-gradient(circle at 68% 30%, #000 0 26%, transparent 27%),
+        linear-gradient(135deg, transparent 0 35%, #000 36% 100%),
+        linear-gradient(225deg, transparent 0 35%, #000 36% 100%);
+      clip-path: polygon(50% 100%, 6% 58%, 6% 24%, 22% 8%, 40% 8%, 50% 20%, 60% 8%, 78% 8%, 94% 24%, 94% 58%);
+    }
+
     .bottom-bar {
       left: 50%;
       bottom: 14px;
@@ -647,12 +715,19 @@
       order: 1;
       width: 100%;
       max-width: 700px;
+      max-height: min(64vh, 560px);
+      overflow-y: auto;
       background: rgba(0, 0, 0, 0.35);
       border: 2px solid rgba(255, 255, 255, 0.12);
       padding: 10px;
       pointer-events: none;
       position: relative;
       z-index: 8;
+    }
+
+    .storage-panels.dual {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: start;
     }
 
     .inventory-header {
@@ -670,10 +745,26 @@
       margin-bottom: 12px;
     }
 
-    .crafting-panel {
+    .storage-panels {
+      display: grid;
+      gap: 12px;
+    }
+
+    .storage-panel {
       background: rgba(0, 0, 0, 0.28);
       border: 2px solid rgba(255, 255, 255, 0.1);
       padding: 10px;
+    }
+
+    .storage-panel.hidden {
+      display: none;
+    }
+
+    .crafting-panel {
+      background: linear-gradient(180deg, rgba(36, 36, 36, 0.92), rgba(12, 12, 12, 0.9));
+      border: 2px solid rgba(255, 255, 255, 0.14);
+      box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.08);
+      padding: 12px;
       max-width: 320px;
       align-self: center;
     }
@@ -734,6 +825,31 @@
       width: min(92vw, 440px);
     }
 
+    .death-menu {
+      background: rgba(92, 0, 0, 0.32);
+      backdrop-filter: blur(1px);
+    }
+
+    .death-menu::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(155, 0, 0, 0.34);
+      pointer-events: none;
+    }
+
+    .death-menu section {
+      position: relative;
+      z-index: 1;
+    }
+
+    .death-copy {
+      margin: -4px 0 14px;
+      text-align: center;
+      color: #ffd5d5;
+      font-size: 0.82rem;
+    }
+
     .mobile-only {
       display: none;
     }
@@ -763,6 +879,7 @@
 
     .inventory-grid {
       grid-template-columns: repeat(10, minmax(48px, 1fr));
+      gap: 8px;
     }
 
     .inventory-storage-title {
@@ -776,9 +893,11 @@
       position: relative;
       aspect-ratio: 1;
       min-height: 48px;
-      background: var(--slot-bg);
-      border: 2px solid var(--slot-border);
-      box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.08);
+      background: linear-gradient(180deg, rgba(70, 70, 70, 0.78), rgba(28, 28, 28, 0.96));
+      border: 2px solid rgba(255, 255, 255, 0.12);
+      box-shadow:
+        inset 0 2px 0 rgba(255, 255, 255, 0.08),
+        inset 0 -2px 0 rgba(0, 0, 0, 0.28);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -807,8 +926,8 @@
     }
 
     .slot-icon {
-      width: 32px;
-      height: 32px;
+      width: 34px;
+      height: 34px;
       background-image: var(--atlas-url);
       background-repeat: no-repeat;
       image-rendering: pixelated;
@@ -1069,15 +1188,22 @@
     </div>
 
     <div class="hud bottom-bar">
+      <div class="heart-row" id="heartRow"></div>
       <div class="inventory-wrap">
         <div class="inventory-header">
           <div class="inventory-label">inventory</div>
           <button class="mc-button inventory-close" id="closeInventoryBtn">x</button>
         </div>
         <div class="inventory-top">
-          <div>
+          <div class="storage-panels">
+            <div class="storage-panel hidden" id="chestPanel">
+              <div class="inventory-storage-title" id="chestTitle">chest</div>
+              <div class="inventory-grid" id="chestGrid"></div>
+            </div>
+            <div class="storage-panel">
             <div class="inventory-storage-title">storage</div>
             <div class="inventory-grid" id="inventoryGrid"></div>
+            </div>
           </div>
           <div class="crafting-panel">
             <div class="crafting-title" id="craftingTitle">crafting</div>
@@ -1103,6 +1229,17 @@
           <button class="mc-button" id="resumeBtn">resume</button>
           <button class="mc-button" id="pauseSettingsBtn">settings</button>
           <button class="mc-button secondary" id="mainMenuBtn">main menu</button>
+        </div>
+      </section>
+    </div>
+
+    <div id="deathMenu" class="overlay-menu death-menu hidden">
+      <section class="panel">
+        <h2 class="section-title">you died</h2>
+        <p class="death-copy" id="deathCopy">you died</p>
+        <div class="menu">
+          <button class="mc-button" id="respawnBtn">respawn</button>
+          <button class="mc-button secondary" id="deathMainMenuBtn">main menu</button>
         </div>
       </section>
     </div>
@@ -1178,7 +1315,6 @@
       <div class="menu">
         <button class="mc-button" id="singleplayerBtn">Singleplayer</button>
         <button class="mc-button" id="multiplayerBtn">Multiplayer</button>
-        <button class="mc-button" id="chatsBtn">Chats</button>
         <button class="mc-button" id="mainSettingsBtn">Settings</button>
         <button class="mc-button secondary" id="quitBtn">Quit Game</button>
       </div>
@@ -1345,6 +1481,11 @@
     const gameShell = document.getElementById("gameShell");
     const canvas = document.getElementById("gameView");
     const hotbarEl = document.getElementById("hotbar");
+    const heartRowEl = document.getElementById("heartRow");
+    const chestPanelEl = document.getElementById("chestPanel");
+    const chestTitleEl = document.getElementById("chestTitle");
+    const chestGridEl = document.getElementById("chestGrid");
+    const deathCopyEl = document.getElementById("deathCopy");
     const inventoryGridEl = document.getElementById("inventoryGrid");
     const craftingGridEl = document.getElementById("craftingGrid");
     const craftingTitleEl = document.getElementById("craftingTitle");
@@ -1354,6 +1495,7 @@
     const screen = document.querySelector(".screen");
     const bottomBar = document.querySelector(".bottom-bar");
     const pauseMenu = document.getElementById("pauseMenu");
+    const deathMenu = document.getElementById("deathMenu");
     const pauseSettingsBtn = document.getElementById("pauseSettingsBtn");
     const mainSettingsBtn = document.getElementById("mainSettingsBtn");
     const optionMenuBtn = document.getElementById("optionMenuBtn");
@@ -1369,6 +1511,8 @@
     const singleplayerBtn = document.getElementById("singleplayerBtn");
     const multiplayerBtn = document.getElementById("multiplayerBtn");
     const chatsBtn = document.getElementById("chatsBtn");
+    const respawnBtn = document.getElementById("respawnBtn");
+    const deathMainMenuBtn = document.getElementById("deathMainMenuBtn");
     const isMobileDevice = /android|iphone|ipad|ipod|windows phone/i.test(navigator.userAgent);
     const PLAYFAB_TITLE_ID = "159D4A";
     const PLAYFAB_WORLD_KEY_PREFIX = "shitcraft_world_";
@@ -1401,7 +1545,32 @@
       COBBLESTONE: 9,
       STICK: 10,
       WOOD_PICKAXE: 11,
-      STONE_PICKAXE: 12
+      STONE_PICKAXE: 12,
+      WATER: 13,
+      IRON_ORE: 14,
+      DIAMOND_ORE: 15,
+      RUBY_ORE: 16,
+      SAND: 17,
+      IRON_INGOT: 18,
+      DIAMOND_GEM: 19,
+      RUBY_GEM: 20,
+      IRON_PICKAXE: 21,
+      DIAMOND_PICKAXE: 22,
+      RUBY_PICKAXE: 23,
+      IRON_BLOCK: 24,
+      DIAMOND_BLOCK: 25,
+      RUBY_BLOCK: 26,
+      WOOD_SHOVEL: 27,
+      STONE_SHOVEL: 28,
+      IRON_SHOVEL: 29,
+      DIAMOND_SHOVEL: 30,
+      RUBY_SHOVEL: 31,
+      WOOD_AXE: 32,
+      STONE_AXE: 33,
+      IRON_AXE: 34,
+      DIAMOND_AXE: 35,
+      RUBY_AXE: 36,
+      CHEST: 37
     };
 
     const BLOCK_INFO = {
@@ -1416,7 +1585,33 @@
       [BLOCK.COBBLESTONE]: { name: "cobblestone", hardness: 1.1, placeable: true },
       [BLOCK.STICK]: { name: "stick", hardness: 0, placeable: false },
       [BLOCK.WOOD_PICKAXE]: { name: "wood pickaxe", hardness: 0, placeable: false, toolType: "pickaxe", toolTier: 1 },
-      [BLOCK.STONE_PICKAXE]: { name: "stone pickaxe", hardness: 0, placeable: false, toolType: "pickaxe", toolTier: 2 }
+      [BLOCK.STONE_PICKAXE]: { name: "stone pickaxe", hardness: 0, placeable: false, toolType: "pickaxe", toolTier: 2 },
+      [BLOCK.WATER]: { name: "water", hardness: 0, placeable: false },
+      [BLOCK.IRON_ORE]: { name: "iron ore", hardness: 1.25, placeable: true },
+      [BLOCK.DIAMOND_ORE]: { name: "diamond ore", hardness: 1.45, placeable: true },
+      [BLOCK.RUBY_ORE]: { name: "ruby ore", hardness: 1.55, placeable: true },
+      [BLOCK.SAND]: { name: "sand", hardness: 0.6, placeable: true },
+      [BLOCK.IRON_INGOT]: { name: "iron", hardness: 0, placeable: false },
+      [BLOCK.DIAMOND_GEM]: { name: "diamond", hardness: 0, placeable: false },
+      [BLOCK.RUBY_GEM]: { name: "ruby", hardness: 0, placeable: false },
+      [BLOCK.IRON_PICKAXE]: { name: "iron pickaxe", hardness: 0, placeable: false, toolType: "pickaxe", toolTier: 3 },
+      [BLOCK.DIAMOND_PICKAXE]: { name: "diamond pickaxe", hardness: 0, placeable: false, toolType: "pickaxe", toolTier: 4 },
+      [BLOCK.RUBY_PICKAXE]: { name: "ruby pickaxe", hardness: 0, placeable: false, toolType: "pickaxe", toolTier: 5 },
+      [BLOCK.IRON_BLOCK]: { name: "iron block", hardness: 1.7, placeable: true },
+      [BLOCK.DIAMOND_BLOCK]: { name: "diamond block", hardness: 1.9, placeable: true },
+      [BLOCK.RUBY_BLOCK]: { name: "ruby block", hardness: 2.1, placeable: true },
+      [BLOCK.WOOD_SHOVEL]: { name: "wood shovel", hardness: 0, placeable: false, toolType: "shovel", toolTier: 1 },
+      [BLOCK.STONE_SHOVEL]: { name: "stone shovel", hardness: 0, placeable: false, toolType: "shovel", toolTier: 2 },
+      [BLOCK.IRON_SHOVEL]: { name: "iron shovel", hardness: 0, placeable: false, toolType: "shovel", toolTier: 3 },
+      [BLOCK.DIAMOND_SHOVEL]: { name: "diamond shovel", hardness: 0, placeable: false, toolType: "shovel", toolTier: 4 },
+      [BLOCK.RUBY_SHOVEL]: { name: "ruby shovel", hardness: 0, placeable: false, toolType: "shovel", toolTier: 5 },
+      [BLOCK.WOOD_AXE]: { name: "wood axe", hardness: 0, placeable: false, toolType: "axe", toolTier: 1 },
+      [BLOCK.STONE_AXE]: { name: "stone axe", hardness: 0, placeable: false, toolType: "axe", toolTier: 2 },
+      [BLOCK.IRON_AXE]: { name: "iron axe", hardness: 0, placeable: false, toolType: "axe", toolTier: 3 },
+      [BLOCK.DIAMOND_AXE]: { name: "diamond axe", hardness: 0, placeable: false, toolType: "axe", toolTier: 4 },
+      [BLOCK.RUBY_AXE]: { name: "ruby axe", hardness: 0, placeable: false, toolType: "axe", toolTier: 5 }
+      ,
+      [BLOCK.CHEST]: { name: "chest", hardness: 1.2, placeable: true }
     };
 
     const FACE_DATA = [
@@ -1429,8 +1624,10 @@
     ];
 
     const CHUNK_SIZE = 16;
-    const WORLD_HEIGHT = 48;
-    const RENDER_DISTANCE = 1;
+    const WORLD_HEIGHT = 80;
+    const WATER_LEVEL = 24;
+    const RENDER_DISTANCE = 4;
+    const CHUNK_BUILD_BATCH = 2;
     const DAY_DURATION = 15 * 60;
     const NIGHT_DURATION = 5 * 60;
     const FULL_DAY_DURATION = DAY_DURATION + NIGHT_DURATION;
@@ -1501,16 +1698,25 @@
       currentSeedHash: 0,
       currentWorldCreatedAt: "",
       spawnLoadedFromSave: false,
+      dead: false,
+      lastDeathMessage: "you died",
+      spawnPoint: { x: 0.5, y: 28, z: 0.5 },
       craftingMode: "inventory",
+      storageMode: "crafting",
+      chestOpenKey: "",
       selectedSlot: 0,
       slots: Array.from({ length: 40 }, () => ({ id: BLOCK.AIR, count: 0 })),
+      chestSlots: Array.from({ length: 40 }, () => ({ id: BLOCK.AIR, count: 0 })),
       inventoryCraftingSlots: Array.from({ length: 4 }, () => ({ id: BLOCK.AIR, count: 0 })),
       tableCraftingSlots: Array.from({ length: 9 }, () => ({ id: BLOCK.AIR, count: 0 })),
       craftResult: { id: BLOCK.AIR, count: 0, recipe: "none" },
       keys: new Set(),
       chunks: new Map(),
+      chunkBuildQueue: [],
+      queuedChunkKeys: new Set(),
       dirtyChunks: new Set(),
       changes: new Map(),
+      chestData: new Map(),
       droppedItems: [],
       heightCache: new Map(),
       raycastTargets: [],
@@ -1529,7 +1735,12 @@
         velocity: new THREE.Vector3(0, 0, 0),
         onGround: false,
         yaw: 0,
-        pitch: 0
+        pitch: 0,
+        health: 20,
+        maxHealth: 20,
+        fallStartY: 28,
+        waterEnteredAt: 0,
+        lastWaterDamageAt: 0
       }
     };
 
@@ -1593,13 +1804,15 @@
       statusText.textContent = "multiplayer is not available right now the servers are broke";
     });
 
-    chatsBtn.addEventListener("click", async () => {
-      const ready = await ensureSignedIn();
-      if (!ready) {
-        return;
-      }
-      await openChatMenu();
-    });
+    if (chatsBtn) {
+      chatsBtn.addEventListener("click", async () => {
+        const ready = await ensureSignedIn();
+        if (!ready) {
+          return;
+        }
+        await openChatMenu();
+      });
+    }
 
     mainSettingsBtn.addEventListener("click", () => {
       openSettingsMenu("main");
@@ -1699,6 +1912,15 @@
     });
 
     document.getElementById("mainMenuBtn").addEventListener("click", () => {
+      leaveToMainMenu();
+    });
+
+    respawnBtn.addEventListener("click", () => {
+      respawnPlayer();
+    });
+
+    deathMainMenuBtn.addEventListener("click", () => {
+      prepareReturnToMenuAfterDeath();
       leaveToMainMenu();
     });
 
@@ -1872,10 +2094,13 @@
       const loaded = await loadWorldState(worldMeta);
       state.started = true;
       state.paused = false;
+      state.dead = false;
       setInventoryOpen(false);
       lastPointerMoveAt = performance.now();
       if (!loaded || !state.spawnLoadedFromSave) {
         setSpawnPoint();
+      } else if (state.player.health <= 0) {
+        prepareReturnToMenuAfterDeath();
       }
       refreshChunksAroundPlayer(true);
       updateInventoryUi();
@@ -1891,7 +2116,7 @@
 
       scene = new THREE.Scene();
       scene.background = new THREE.Color(0x94a3ab);
-      scene.fog = new THREE.Fog(0x94a3ab, 24, 110);
+      scene.fog = new THREE.Fog(0x94a3ab, 36, 240);
 
       camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 300);
       camera.rotation.order = "YXZ";
@@ -1973,6 +2198,7 @@
 
       state.gameReady = true;
       updateInventoryUi();
+      updateHeartsUi();
       animate();
     }
 
@@ -2112,7 +2338,9 @@
 
     function updateMenuAvailability() {
       singleplayerBtn.disabled = !state.auth.signedIn;
-      chatsBtn.disabled = !state.auth.signedIn;
+      if (chatsBtn) {
+        chatsBtn.disabled = !state.auth.signedIn;
+      }
     }
 
     function showAuthScreen() {
@@ -2426,9 +2654,12 @@
     function resetInventoryState() {
       state.selectedSlot = 0;
       state.slots = cloneSlots([], 40);
+      state.chestSlots = cloneSlots([], 40);
       state.inventoryCraftingSlots = cloneSlots([], 4);
       state.tableCraftingSlots = cloneSlots([], 9);
       state.craftingMode = "inventory";
+      state.storageMode = "crafting";
+      state.chestOpenKey = "";
       state.craftResult = { id: BLOCK.AIR, count: 0, recipe: "none" };
     }
 
@@ -2521,11 +2752,19 @@
     function clearWorldState() {
       state.changes.clear();
       state.heightCache.clear();
+      state.chunkBuildQueue = [];
+      state.queuedChunkKeys.clear();
       state.dirtyChunks.clear();
       state.target = null;
       state.lastChunkX = null;
       state.lastChunkZ = null;
       state.spawnLoadedFromSave = false;
+      state.dead = false;
+      state.spawnPoint = { x: 0.5, y: 28, z: 0.5 };
+      state.chestData.clear();
+      state.player.health = state.player.maxHealth;
+      state.player.waterEnteredAt = 0;
+      state.player.lastWaterDamageAt = 0;
       state.droppedItems.forEach((drop) => {
         scene?.remove(drop.mesh);
       });
@@ -2536,6 +2775,8 @@
       }
       state.chunks.clear();
       rebuildRaycastTargets();
+      deathMenu.classList.add("hidden");
+      updateHeartsUi();
     }
 
     function getWorldStorageKey(worldId) {
@@ -2993,6 +3234,15 @@
 
     function serializeWorldState() {
       const changedBlocks = [];
+      const chests = Array.from(state.chestData.entries()).map(([key, slots]) => {
+        const [x, y, z] = key.split(",").map(Number);
+        return {
+          x,
+          y,
+          z,
+          slots: cloneSlots(slots, 40)
+        };
+      });
       const droppedItems = state.droppedItems.map((drop) => ({
         id: drop.id,
         count: drop.count,
@@ -3027,6 +3277,11 @@
         createdAt: state.currentWorldCreatedAt,
         playFabId: state.auth.playFabId,
         changedBlocks,
+        spawnPoint: {
+          x: state.spawnPoint.x,
+          y: state.spawnPoint.y,
+          z: state.spawnPoint.z
+        },
         player: {
           position: {
             x: state.player.position.x,
@@ -3040,13 +3295,15 @@
           },
           yaw: state.player.yaw,
           pitch: state.player.pitch,
-          onGround: state.player.onGround
+          onGround: state.player.onGround,
+          health: state.player.health
         },
         inventory: {
           selectedSlot: state.selectedSlot,
           slots: cloneSlots(state.slots, 40),
           craftingSlots: cloneSlots(state.inventoryCraftingSlots, 4)
         },
+        chests,
         dayTime: state.dayTime,
         droppedItems,
         loadedChunks: Array.from(state.chunks.keys()).map((key) => {
@@ -3059,6 +3316,7 @@
 
     function applySerializedWorldState(world) {
       state.changes.clear();
+      state.chestData.clear();
       resetInventoryState();
       state.droppedItems.forEach((drop) => {
         scene?.remove(drop.mesh);
@@ -3085,6 +3343,14 @@
         state.craftingMode = "inventory";
       }
 
+      if (world?.spawnPoint) {
+        state.spawnPoint = {
+          x: Number(world.spawnPoint.x) || 0.5,
+          y: Number(world.spawnPoint.y) || 28,
+          z: Number(world.spawnPoint.z) || 0.5
+        };
+      }
+
       if (world?.player?.position) {
         state.player.position.set(
           Number(world.player.position.x) || 0,
@@ -3099,12 +3365,33 @@
         state.player.yaw = Number(world.player.yaw) || 0;
         state.player.pitch = Number(world.player.pitch) || 0;
         state.player.onGround = Boolean(world.player.onGround);
+        state.player.health = Math.max(0, Math.min(state.player.maxHealth, Number(world.player.health) || state.player.maxHealth));
+        state.player.fallStartY = state.player.position.y;
+        state.player.waterEnteredAt = 0;
+        state.player.lastWaterDamageAt = 0;
         state.spawnLoadedFromSave = true;
+        if (!world?.spawnPoint) {
+          state.spawnPoint = {
+            x: state.player.position.x,
+            y: state.player.position.y,
+            z: state.player.position.z
+          };
+        }
       }
 
       if (Number.isFinite(Number(world?.dayTime))) {
         state.dayTime = ((Number(world.dayTime) % FULL_DAY_DURATION) + FULL_DAY_DURATION) % FULL_DAY_DURATION;
       }
+
+      (world?.chests || []).forEach((entry) => {
+        const x = Number(entry?.x);
+        const y = Number(entry?.y);
+        const z = Number(entry?.z);
+        if (!Number.isFinite(x) || !Number.isFinite(y) || !Number.isFinite(z)) {
+          return;
+        }
+        state.chestData.set(blockKey(x, y, z), cloneSlots(entry?.slots, 40));
+      });
 
       (world?.droppedItems || []).forEach((entry) => {
         const id = Number(entry?.id);
@@ -3269,6 +3556,11 @@
         return;
       }
 
+      if (state.dead) {
+        event.preventDefault();
+        return;
+      }
+
       const key = event.key.toLowerCase();
       if (key === "`") {
         setPaused(!state.paused);
@@ -3328,7 +3620,7 @@
     }
 
     function onMouseDown(event) {
-      if (!state.started || document.pointerLockElement !== canvas || state.paused) {
+      if (!state.started || document.pointerLockElement !== canvas || state.paused || state.dead) {
         return;
       }
 
@@ -3339,6 +3631,10 @@
       if (event.button === 2) {
         if (state.target?.id === BLOCK.CRAFTING_TABLE) {
           openCraftingInterface("table");
+          return;
+        }
+        if (state.target?.id === BLOCK.CHEST) {
+          openChestInterface(state.target.x, state.target.y, state.target.z);
           return;
         }
         placeSelectedBlock();
@@ -3540,6 +3836,8 @@
         if (state.mobile.lookPointerId === event.pointerId) {
           if (!state.mobile.lookMoved && state.target?.id === BLOCK.CRAFTING_TABLE) {
             openCraftingInterface("table");
+          } else if (!state.mobile.lookMoved && state.target?.id === BLOCK.CHEST) {
+            openChestInterface(state.target.x, state.target.y, state.target.z);
           }
           state.mobile.lookPointerId = null;
           state.mobile.lookMoved = false;
@@ -3646,10 +3944,135 @@
       }
 
       const terrain = getTerrainHeight(spawnX, spawnZ);
-      state.player.position.set(spawnX + 0.5, terrain + 1.05, spawnZ + 0.5);
+      state.spawnPoint = {
+        x: spawnX + 0.5,
+        y: terrain + 1.05,
+        z: spawnZ + 0.5
+      };
+      state.player.position.set(state.spawnPoint.x, state.spawnPoint.y, state.spawnPoint.z);
       state.player.velocity.set(0, 0, 0);
       state.player.yaw = 0;
       state.player.pitch = 0;
+      state.player.fallStartY = state.player.position.y;
+    }
+
+    function getPlayerWaterDepth() {
+      const feet = getBlock(
+        Math.floor(state.player.position.x),
+        Math.floor(state.player.position.y + 0.1),
+        Math.floor(state.player.position.z)
+      ) === BLOCK.WATER;
+      const body = getBlock(
+        Math.floor(state.player.position.x),
+        Math.floor(state.player.position.y + 0.9),
+        Math.floor(state.player.position.z)
+      ) === BLOCK.WATER;
+      const eye = getBlock(
+        Math.floor(state.player.position.x),
+        Math.floor(state.player.position.y + EYE_HEIGHT),
+        Math.floor(state.player.position.z)
+      ) === BLOCK.WATER;
+      return {
+        feet,
+        body,
+        eye,
+        submerged: feet || body || eye
+      };
+    }
+
+    function applyDamage(amount, cause = "you died") {
+      state.player.health = Math.max(0, state.player.health - amount);
+      updateHeartsUi();
+      if (state.player.health <= 0 && !state.dead) {
+        handlePlayerDeath(cause);
+      }
+    }
+
+    function updateHeartsUi() {
+      if (!heartRowEl) {
+        return;
+      }
+      heartRowEl.innerHTML = "";
+      for (let i = 0; i < 10; i += 1) {
+        const heart = document.createElement("div");
+        const value = state.player.health - (i * 2);
+        heart.className = `heart${value <= 0 ? " empty" : value === 1 ? " half" : ""}`;
+        heartRowEl.appendChild(heart);
+      }
+    }
+
+    function dropAllItemsAtDeath() {
+      const baseX = state.player.position.x;
+      const baseY = state.player.position.y + 0.45;
+      const baseZ = state.player.position.z;
+      for (const slot of state.slots) {
+        if (slot.id === BLOCK.AIR || slot.count <= 0) {
+          continue;
+        }
+        spawnDroppedItem(baseX, baseY, baseZ, slot.id, slot.count);
+        const drop = state.droppedItems[state.droppedItems.length - 1];
+        if (drop) {
+          const angle = Math.random() * Math.PI * 2;
+          const force = 2.4 + Math.random() * 4.8;
+          drop.vx = Math.cos(angle) * force;
+          drop.vz = Math.sin(angle) * force;
+          drop.vy = 3.6 + Math.random() * 2.4;
+          drop.spin = 1.2 + Math.random() * 2.2;
+        }
+        slot.id = BLOCK.AIR;
+        slot.count = 0;
+      }
+    }
+
+    function handlePlayerDeath(cause = "you died") {
+      state.dead = true;
+      state.lastDeathMessage = cause;
+      state.paused = false;
+      closeSettingsMenus();
+      setInventoryOpen(false);
+      dropAllItemsAtDeath();
+      state.player.velocity.set(0, 0, 0);
+      if (deathCopyEl) {
+        deathCopyEl.textContent = cause;
+      }
+      deathMenu.classList.remove("hidden");
+      document.exitPointerLock?.();
+      updateInventoryUi();
+      updateStatusLine();
+      scheduleWorldSave();
+    }
+
+    function respawnPlayer() {
+      state.dead = false;
+      state.lastDeathMessage = "you died";
+      deathMenu.classList.add("hidden");
+      state.player.health = state.player.maxHealth;
+      state.player.position.set(state.spawnPoint.x, state.spawnPoint.y, state.spawnPoint.z);
+      state.player.velocity.set(0, 0, 0);
+      state.player.yaw = 0;
+      state.player.pitch = 0;
+      state.player.onGround = false;
+      state.player.fallStartY = state.player.position.y;
+      state.player.waterEnteredAt = 0;
+      state.player.lastWaterDamageAt = 0;
+      updateInventoryUi();
+      updateStatusLine();
+      scheduleWorldSave();
+    }
+
+    function prepareReturnToMenuAfterDeath() {
+      state.dead = false;
+      state.lastDeathMessage = "you died";
+      deathMenu.classList.add("hidden");
+      state.player.health = state.player.maxHealth;
+      state.player.position.set(state.spawnPoint.x, state.spawnPoint.y, state.spawnPoint.z);
+      state.player.velocity.set(0, 0, 0);
+      state.player.yaw = 0;
+      state.player.pitch = 0;
+      state.player.onGround = false;
+      state.player.fallStartY = state.player.position.y;
+      state.player.waterEnteredAt = 0;
+      state.player.lastWaterDamageAt = 0;
     }
 
     function mixHex(a, b, t) {
@@ -3661,17 +4084,18 @@
     function getCaveShadeAt(x, y, z) {
       let openCount = 0;
       let solidCount = 0;
-      for (let i = 1; i <= 14; i += 1) {
+      for (let i = 1; i <= 20; i += 1) {
         const blockId = getBlock(x, y + i, z);
-        if (blockId === BLOCK.AIR) {
+        if (blockId === BLOCK.AIR || blockId === BLOCK.WATER) {
           openCount += 1;
         } else {
           solidCount += 1;
         }
       }
-      const openness = openCount / 14;
-      const densityPenalty = THREE.MathUtils.clamp(solidCount / 10, 0, 1);
-      return THREE.MathUtils.clamp((1 - openness) * 0.82 + densityPenalty * 0.18, 0, 1);
+      const openness = openCount / 20;
+      const depth = THREE.MathUtils.clamp((WATER_LEVEL - y) / WATER_LEVEL, 0, 1);
+      const densityPenalty = THREE.MathUtils.clamp(solidCount / 12, 0, 1);
+      return THREE.MathUtils.clamp((1 - openness) * 0.74 + densityPenalty * 0.16 + depth * 0.34, 0, 1);
     }
 
     function createCelestialTexture(kind) {
@@ -3730,6 +4154,7 @@
 
       const daylight = THREE.MathUtils.clamp((sunHeight + 0.12) / 0.95, 0, 1);
       const warmBand = THREE.MathUtils.clamp(1 - Math.abs(sunHeight) * 3.2, 0, 1);
+      const waterState = state.started ? getPlayerWaterDepth() : { eye: false, submerged: false };
       const caveShade = state.started
         ? getCaveShadeAt(
           Math.floor(state.player.position.x),
@@ -3744,13 +4169,18 @@
       const fogColor = daylight > 0.1
         ? mixHex(0xe68a5f, 0x94a3ab, THREE.MathUtils.clamp(daylight, 0, 1))
         : mixHex(0x0a0d16, 0x31415f, THREE.MathUtils.clamp(daylight * 2.2, 0, 1));
-      const effectiveFog = fogColor.clone().multiplyScalar(0.28 + caveLight * 0.72);
+      let effectiveFog = fogColor.clone().multiplyScalar(0.28 + caveLight * 0.72);
+      if (waterState.eye) {
+        effectiveFog = mixHex(0x2a62b0, 0x5ea9df, daylight * 0.6);
+      }
 
-      scene.background.copy(skyColor);
+      scene.background.copy(waterState.eye ? effectiveFog : skyColor);
       scene.fog.color.copy(effectiveFog);
       if (blockMaterial?.uniforms) {
         blockMaterial.uniforms.uSunDir.value.copy(sunDirection);
         blockMaterial.uniforms.uFogColor.value.copy(effectiveFog);
+        blockMaterial.uniforms.uFogNear.value = waterState.eye ? 6 : 36;
+        blockMaterial.uniforms.uFogFar.value = waterState.eye ? 38 : 240;
       }
 
       if (hemiLight) {
@@ -3784,17 +4214,22 @@
 
       const delta = Math.min(clock.getDelta(), 0.05);
 
-      if (state.started && !state.paused) {
+      if (state.started && !state.paused && !state.dead) {
         updateDayNight(delta);
         updatePlayer(delta);
         refreshChunksAroundPlayer(false);
         flushDirtyChunks();
+        flushChunkBuildQueue();
         updateTargetedBlock();
         updateMining();
         updateDroppedItems(delta);
       } else if (state.started) {
         stopMining();
-        updateDayNight(0);
+        updateDayNight(state.dead ? delta : 0);
+        if (state.dead) {
+          updateDroppedItems(delta);
+        }
+        flushChunkBuildQueue();
       }
 
       updateStatusLine();
@@ -3809,6 +4244,16 @@
     }
 
     function updatePlayer(delta) {
+      if (state.dead) {
+        camera.position.copy(state.player.position).add(tempEyeOffset.set(0, EYE_HEIGHT, 0));
+        camera.rotation.order = "YXZ";
+        camera.rotation.y = state.player.yaw;
+        camera.rotation.x = state.player.pitch;
+        return;
+      }
+      const wasOnGround = state.player.onGround;
+      const waterState = getPlayerWaterDepth();
+      const inWater = waterState.submerged;
       const inputX = THREE.MathUtils.clamp(
         ((state.keys.has("d") ? 1 : 0) - (state.keys.has("a") ? 1 : 0)) + state.mobile.moveX,
         -1,
@@ -3829,19 +4274,27 @@
         tempRight.crossVectors(tempForward, tempUp).normalize();
 
         const move = tempRight.multiplyScalar(input.x).add(tempForward.multiplyScalar(input.z));
-        state.player.velocity.x = move.x * WALK_SPEED;
-        state.player.velocity.z = move.z * WALK_SPEED;
+        const moveSpeed = inWater ? WALK_SPEED * 0.52 : WALK_SPEED;
+        state.player.velocity.x = move.x * moveSpeed;
+        state.player.velocity.z = move.z * moveSpeed;
       } else {
         state.player.velocity.x = 0;
         state.player.velocity.z = 0;
       }
 
-      if ((state.keys.has(" ") || state.mobile.jumpHeld) && state.player.onGround) {
+      if (inWater) {
+        if (state.keys.has(" ") || state.mobile.jumpHeld) {
+          state.player.velocity.y = Math.min(4.2, state.player.velocity.y + (12 * delta));
+        } else {
+          state.player.velocity.y = Math.max(-2.3, state.player.velocity.y - (6 * delta));
+        }
+      } else if ((state.keys.has(" ") || state.mobile.jumpHeld) && state.player.onGround) {
         state.player.velocity.y = JUMP_SPEED;
         state.player.onGround = false;
+        state.player.fallStartY = state.player.position.y;
       }
 
-      state.player.velocity.y -= GRAVITY * delta;
+      state.player.velocity.y -= (inWater ? GRAVITY * 0.16 : GRAVITY) * delta;
 
       const next = state.player.position.clone();
       next.x += state.player.velocity.x * delta;
@@ -3860,11 +4313,39 @@
       if (!collidesAt(next)) {
         state.player.position.y = next.y;
         state.player.onGround = false;
+        if (state.player.position.y > state.player.fallStartY) {
+          state.player.fallStartY = state.player.position.y;
+        }
       } else {
         if (state.player.velocity.y < 0) {
           state.player.onGround = true;
+          if (!inWater && !wasOnGround) {
+            const fallDistance = Math.max(0, state.player.fallStartY - state.player.position.y);
+            if (fallDistance >= 3) {
+              applyDamage(Math.floor(fallDistance / 3), "you hit the ground too hard");
+            }
+          }
         }
         state.player.velocity.y = 0;
+        state.player.fallStartY = state.player.position.y;
+      }
+
+      if (!state.player.onGround && state.player.position.y > state.player.fallStartY) {
+        state.player.fallStartY = state.player.position.y;
+      }
+
+      const now = performance.now();
+      if (inWater) {
+        if (!state.player.waterEnteredAt) {
+          state.player.waterEnteredAt = now;
+          state.player.lastWaterDamageAt = now;
+        } else if (now - state.player.waterEnteredAt >= 5000 && now - state.player.lastWaterDamageAt >= 1500) {
+          applyDamage(2, "you drowned");
+          state.player.lastWaterDamageAt = now;
+        }
+      } else {
+        state.player.waterEnteredAt = 0;
+        state.player.lastWaterDamageAt = 0;
       }
 
       camera.position.set(
@@ -3898,7 +4379,7 @@
     }
 
     function isSolid(blockId) {
-      return blockId !== BLOCK.AIR;
+      return blockId !== BLOCK.AIR && blockId !== BLOCK.WATER;
     }
 
     function blockKey(x, y, z) {
@@ -4014,10 +4495,22 @@
         return state.heightCache.get(key);
       }
 
-      const broad = fbm2(x * 0.018, z * 0.018, 5);
-      const detail = fbm2(x * 0.06, z * 0.06, 3);
-      const height = Math.floor(14 + (broad * 14) + (detail * 5));
-      const clamped = Math.max(8, Math.min(WORLD_HEIGHT - 8, height));
+      const continent = fbm2(x * 0.0046, z * 0.0046, 5);
+      const islandNoise = fbm2((x + 1200) * 0.0105, (z - 900) * 0.0105, 4);
+      const broad = fbm2(x * 0.016, z * 0.016, 5);
+      const detail = fbm2(x * 0.052, z * 0.052, 3);
+      const ridge = Math.abs(fbm2((x - 800) * 0.013, (z + 500) * 0.013, 4) - 0.5) * 2;
+      const mountainNoise = Math.abs(fbm2((x - 1400) * 0.008, (z + 1100) * 0.008, 5) - 0.5) * 2;
+      const riverNoise = Math.abs(fbm2((x + 2500) * 0.0085, (z - 1700) * 0.0085, 4) - 0.5);
+      const pondNoise = fbm2((x - 400) * 0.028, (z + 650) * 0.028, 4);
+      const continentBias = (continent - 0.5) * 46;
+      const islandBoost = Math.max(0, islandNoise - 0.58) * 22;
+      const ridgeBoost = (1 - ridge) * 7;
+      const mountainBoost = Math.pow(Math.max(0, 1 - mountainNoise), 2.1) * 26;
+      const riverCut = riverNoise < 0.03 ? ((0.03 - riverNoise) / 0.03) * 8.5 : 0;
+      const pondCut = pondNoise > 0.76 ? (pondNoise - 0.76) * 16 : 0;
+      const height = Math.floor(WATER_LEVEL - 3 + continentBias + islandBoost + mountainBoost + (broad * 10) + (detail * 4) + ridgeBoost - riverCut - pondCut);
+      const clamped = Math.max(6, Math.min(WORLD_HEIGHT - 10, height));
       state.heightCache.set(key, clamped);
       return clamped;
     }
@@ -4027,12 +4520,61 @@
         return false;
       }
 
+      const terrain = getTerrainHeight(x, z);
       const h = hash2(x * 0.5, z * 0.5);
+      if (terrain > WATER_LEVEL + 18) {
+        return h > 0.9;
+      }
       return h > 0.79;
     }
 
     function getTreeHeight(x, z) {
       return 4 + Math.floor(hash2((x * 0.5) + 99, (z * 0.5) + 99) * 3);
+    }
+
+    function isRavineCarved(x, y, z, terrain) {
+      if (y < 6 || y > terrain - 7) {
+        return false;
+      }
+
+      const ravineLine = Math.abs(fbm2((x + 700) * 0.0105, (z - 500) * 0.0105, 3) - 0.5);
+      if (ravineLine > 0.022) {
+        return false;
+      }
+
+      const depthBias = hash2((x * 0.016) + 200, (z * 0.016) - 400);
+      const ravineFloor = Math.max(5, Math.floor((terrain * 0.16) + (depthBias * 7)));
+      const ravineWidth = 2.1 + ((0.022 - ravineLine) / 0.022) * 4.1;
+      const verticalBias = 0.31 + (depthBias * 0.22);
+      return y >= ravineFloor && y <= terrain - 6 && ((terrain - y) * verticalBias) < ravineWidth * 2.7;
+    }
+
+    function isCaveCarved(x, y, z, terrain) {
+      if (y <= 4 || y >= terrain - 8) {
+        return false;
+      }
+
+      const mountainFactor = Math.max(0, terrain - (WATER_LEVEL + 16));
+      const caveNoise = fbm3(x * 0.034, y * 0.038, z * 0.034, 4);
+      const deepThreshold = y < WATER_LEVEL - 12 ? 0.738 : 0.782;
+      const canSurfaceOpen = mountainFactor > 6 && y >= terrain - 12 && hash3(x * 0.02, y * 0.03, z * 0.02) > 0.982;
+      return (caveNoise > deepThreshold && y < terrain - 7) || canSurfaceOpen;
+    }
+
+    function getOreBlock(x, y, z) {
+      const ironNoise = hash3((x * 0.17) + 200, (y * 0.29) - 100, (z * 0.15) + 900);
+      const diamondNoise = hash3((x * 0.23) - 740, (y * 0.36) + 420, (z * 0.19) - 120);
+      const rubyNoise = hash3((x * 0.27) + 1600, (y * 0.39) - 840, (z * 0.23) + 610);
+      if (y < 11 && diamondNoise > 0.9952) {
+        return BLOCK.DIAMOND_ORE;
+      }
+      if (y < 8 && rubyNoise > 0.9978) {
+        return BLOCK.RUBY_ORE;
+      }
+      if (y < 38 && ironNoise > 0.93) {
+        return BLOCK.IRON_ORE;
+      }
+      return BLOCK.STONE;
     }
 
     function getGeneratedBlock(x, y, z) {
@@ -4045,19 +4587,24 @@
       }
 
       const terrain = getTerrainHeight(x, z);
-      const caveNoise = fbm3(x * 0.055, y * 0.055, z * 0.055, 4);
-      const carveCave = y > 2 && y < terrain - 2 && caveNoise > 0.64;
+      const carveRavine = isRavineCarved(x, y, z, terrain);
+      const carveCave = isCaveCarved(x, y, z, terrain);
 
-      if (y <= terrain && !carveCave) {
+      if (y <= terrain && !carveCave && !carveRavine) {
+        const beachBand = terrain <= WATER_LEVEL + 2;
         if (y === terrain) {
-          return BLOCK.GRASS;
+          return beachBand ? BLOCK.SAND : BLOCK.GRASS;
         }
 
         if (y >= terrain - 3) {
-          return BLOCK.DIRT;
+          return beachBand ? BLOCK.SAND : BLOCK.DIRT;
         }
 
-        return BLOCK.STONE;
+        return getOreBlock(x, y, z);
+      }
+
+      if (y <= WATER_LEVEL && y > terrain) {
+        return BLOCK.WATER;
       }
 
       for (let dx = -2; dx <= 2; dx += 1) {
@@ -4069,6 +4616,9 @@
           }
 
           const rootY = getTerrainHeight(rootX, rootZ);
+          if (rootY <= WATER_LEVEL + 1) {
+            continue;
+          }
           if (getGeneratedBlockBaseOnly(rootX, rootY, rootZ) !== BLOCK.GRASS) {
             continue;
           }
@@ -4103,19 +4653,24 @@
       }
 
       const terrain = getTerrainHeight(x, z);
-      const caveNoise = fbm3(x * 0.055, y * 0.055, z * 0.055, 4);
-      const carveCave = y > 2 && y < terrain - 2 && caveNoise > 0.64;
+      const carveRavine = isRavineCarved(x, y, z, terrain);
+      const carveCave = isCaveCarved(x, y, z, terrain);
 
-      if (y <= terrain && !carveCave) {
+      if (y <= terrain && !carveCave && !carveRavine) {
+        const beachBand = terrain <= WATER_LEVEL + 2;
         if (y === terrain) {
-          return BLOCK.GRASS;
+          return beachBand ? BLOCK.SAND : BLOCK.GRASS;
         }
 
         if (y >= terrain - 3) {
-          return BLOCK.DIRT;
+          return beachBand ? BLOCK.SAND : BLOCK.DIRT;
         }
 
-        return BLOCK.STONE;
+        return getOreBlock(x, y, z);
+      }
+
+      if (y <= WATER_LEVEL && y > terrain) {
+        return BLOCK.WATER;
       }
 
       return BLOCK.AIR;
@@ -4158,6 +4713,19 @@
       }
     }
 
+    function queueChunkBuild(cx, cz, prioritize = false) {
+      const key = chunkKey(cx, cz);
+      if (state.queuedChunkKeys.has(key)) {
+        return;
+      }
+      state.queuedChunkKeys.add(key);
+      if (prioritize) {
+        state.chunkBuildQueue.unshift({ cx, cz, key });
+      } else {
+        state.chunkBuildQueue.push({ cx, cz, key });
+      }
+    }
+
     function refreshChunksAroundPlayer(force) {
       const playerChunkX = Math.floor(state.player.position.x / CHUNK_SIZE);
       const playerChunkZ = Math.floor(state.player.position.z / CHUNK_SIZE);
@@ -4168,6 +4736,7 @@
       state.lastChunkX = playerChunkX;
       state.lastChunkZ = playerChunkZ;
       const needed = new Set();
+      const pending = [];
 
       for (let dz = -RENDER_DISTANCE; dz <= RENDER_DISTANCE; dz += 1) {
         for (let dx = -RENDER_DISTANCE; dx <= RENDER_DISTANCE; dx += 1) {
@@ -4175,29 +4744,45 @@
           const cz = playerChunkZ + dz;
           const key = chunkKey(cx, cz);
           needed.add(key);
-          if (!state.chunks.has(key) || force) {
-            buildChunk(cx, cz);
+          if (!state.chunks.has(key)) {
+            pending.push({ cx, cz, distance: Math.abs(dx) + Math.abs(dz) });
+          } else if (force) {
+            queueChunkBuild(cx, cz, true);
           }
         }
       }
+
+      pending.sort((a, b) => a.distance - b.distance);
+      pending.forEach((entry) => {
+        queueChunkBuild(entry.cx, entry.cz, entry.distance <= 1);
+      });
 
       for (const [key, chunk] of state.chunks.entries()) {
         if (!needed.has(key)) {
           worldGroup.remove(chunk.mesh);
           chunk.mesh.geometry.dispose();
-          chunk.mesh.material.dispose();
           state.chunks.delete(key);
         }
       }
     }
 
+    function flushChunkBuildQueue() {
+      let built = 0;
+      while (state.chunkBuildQueue.length > 0 && built < CHUNK_BUILD_BATCH) {
+        const next = state.chunkBuildQueue.shift();
+        state.queuedChunkKeys.delete(next.key);
+        buildChunk(next.cx, next.cz);
+        built += 1;
+      }
+    }
+
     function flushDirtyChunks() {
-      const dirty = Array.from(state.dirtyChunks).slice(0, 2);
+      const dirty = Array.from(state.dirtyChunks).slice(0, CHUNK_BUILD_BATCH);
       dirty.forEach((key) => {
         state.dirtyChunks.delete(key);
         const chunk = state.chunks.get(key);
         if (chunk) {
-          buildChunk(chunk.cx, chunk.cz);
+          queueChunkBuild(chunk.cx, chunk.cz, true);
         }
       });
     }
@@ -4230,7 +4815,11 @@
               const nx = wx + face.dir[0];
               const ny = y + face.dir[1];
               const nz = wz + face.dir[2];
-              if (getBlock(nx, ny, nz) !== BLOCK.AIR) {
+              const neighborId = getBlock(nx, ny, nz);
+              const sameLiquid = blockId === BLOCK.WATER && neighborId === BLOCK.WATER;
+              const solidAgainstWater = blockId !== BLOCK.WATER && neighborId === BLOCK.WATER;
+              const waterAgainstSolid = blockId === BLOCK.WATER && neighborId !== BLOCK.AIR && neighborId !== BLOCK.WATER;
+              if (sameLiquid || (!solidAgainstWater && !waterAgainstSolid && neighborId !== BLOCK.AIR)) {
                 return;
               }
 
@@ -4337,19 +4926,127 @@
         return 15;
       }
 
+      if (blockId === BLOCK.WATER) {
+        return 16;
+      }
+
+      if (blockId === BLOCK.IRON_ORE) {
+        return 17;
+      }
+
+      if (blockId === BLOCK.DIAMOND_ORE) {
+        return 18;
+      }
+
+      if (blockId === BLOCK.RUBY_ORE) {
+        return 19;
+      }
+
+      if (blockId === BLOCK.SAND) {
+        return 20;
+      }
+
+      if (blockId === BLOCK.IRON_INGOT) {
+        return 21;
+      }
+
+      if (blockId === BLOCK.DIAMOND_GEM) {
+        return 22;
+      }
+
+      if (blockId === BLOCK.RUBY_GEM) {
+        return 23;
+      }
+
+      if (blockId === BLOCK.IRON_PICKAXE) {
+        return 24;
+      }
+
+      if (blockId === BLOCK.DIAMOND_PICKAXE) {
+        return 25;
+      }
+
+      if (blockId === BLOCK.RUBY_PICKAXE) {
+        return 26;
+      }
+
+      if (blockId === BLOCK.IRON_BLOCK) {
+        return 27;
+      }
+
+      if (blockId === BLOCK.DIAMOND_BLOCK) {
+        return 28;
+      }
+
+      if (blockId === BLOCK.RUBY_BLOCK) {
+        return 29;
+      }
+
+      if (blockId === BLOCK.WOOD_SHOVEL) {
+        return 30;
+      }
+
+      if (blockId === BLOCK.STONE_SHOVEL) {
+        return 31;
+      }
+
+      if (blockId === BLOCK.IRON_SHOVEL) {
+        return 32;
+      }
+
+      if (blockId === BLOCK.DIAMOND_SHOVEL) {
+        return 33;
+      }
+
+      if (blockId === BLOCK.RUBY_SHOVEL) {
+        return 34;
+      }
+
+      if (blockId === BLOCK.WOOD_AXE) {
+        return 35;
+      }
+
+      if (blockId === BLOCK.STONE_AXE) {
+        return 36;
+      }
+
+      if (blockId === BLOCK.IRON_AXE) {
+        return 37;
+      }
+
+      if (blockId === BLOCK.DIAMOND_AXE) {
+        return 38;
+      }
+
+      if (blockId === BLOCK.RUBY_AXE) {
+        return 39;
+      }
+
+      if (blockId === BLOCK.CHEST) {
+        if (faceId === 2) {
+          return 40;
+        }
+        if (faceId === 3) {
+          return 42;
+        }
+        return 41;
+      }
+
       return 1;
     }
 
     function getTileUvs(tileIndex) {
-      const atlasSize = 4;
-      const tileSize = 1 / atlasSize;
-      const x = tileIndex % atlasSize;
-      const y = Math.floor(tileIndex / atlasSize);
+      const atlasWidth = 8;
+      const atlasHeight = 8;
+      const tileWidth = 1 / atlasWidth;
+      const tileHeight = 1 / atlasHeight;
+      const x = tileIndex % atlasWidth;
+      const y = Math.floor(tileIndex / atlasWidth);
       const inset = 0.002;
-      const u0 = (x * tileSize) + inset;
-      const v0 = 1 - ((y + 1) * tileSize) + inset;
-      const u1 = ((x + 1) * tileSize) - inset;
-      const v1 = 1 - (y * tileSize) - inset;
+      const u0 = (x * tileWidth) + inset;
+      const v0 = 1 - ((y + 1) * tileHeight) + inset;
+      const u1 = ((x + 1) * tileWidth) - inset;
+      const v1 = 1 - (y * tileHeight) - inset;
 
       return [
         [u1, v0],
@@ -4362,12 +5059,13 @@
     function createBlockShaderMaterial() {
       return new THREE.ShaderMaterial({
         transparent: true,
+        side: THREE.DoubleSide,
         uniforms: {
           uAtlas: { value: blockTexture },
           uSunDir: { value: sunDirection.clone() },
           uFogColor: { value: new THREE.Color(0x94a3ab) },
-          uFogNear: { value: 24 },
-          uFogFar: { value: 110 },
+          uFogNear: { value: 36 },
+          uFogFar: { value: 240 },
           uTime: { value: 0 }
         },
         vertexShader: `
@@ -4422,13 +5120,13 @@
 
     function buildBlockTextureAtlas() {
       const atlas = document.createElement("canvas");
-      atlas.width = 128;
-      atlas.height = 128;
+      atlas.width = 256;
+      atlas.height = 256;
       const ctx = atlas.getContext("2d");
 
       const paintTile = (index, painter) => {
-        const x = (index % 4) * 32;
-        const y = Math.floor(index / 4) * 32;
+        const x = (index % 8) * 32;
+        const y = Math.floor(index / 8) * 32;
         painter(ctx, x, y);
       };
 
@@ -4718,6 +5416,225 @@
         ctx2d.fillRect(x + 15, y + 9, 1, 14);
       });
 
+      paintTile(16, (ctx2d, x, y) => {
+        ctx2d.clearRect(x, y, 32, 32);
+        for (let py = 0; py < 32; py += 1) {
+          for (let px = 0; px < 32; px += 1) {
+            const n = hash3((px * 0.35) + x, (py * 0.35) + y, 17);
+            const edge = Math.abs(py - 10) < 2 && n > 0.68;
+            const shimmer = (px + py) % 7 === 0;
+            const alpha = edge ? 0.82 : shimmer ? 0.74 : 0.68;
+            ctx2d.fillStyle = edge
+              ? `rgba(162, 230, 255, ${alpha})`
+              : n > 0.74
+                ? `rgba(72, 154, 231, ${alpha})`
+                : `rgba(44, 111, 206, ${alpha})`;
+            ctx2d.fillRect(x + px, y + py, 1, 1);
+          }
+        }
+        ctx2d.fillStyle = "rgba(210, 246, 255, 0.48)";
+        ctx2d.fillRect(x + 1, y + 9, 30, 1);
+      });
+
+      const drawOreTile = (ctx2d, x, y, baseColors, oreColors) => {
+        fillNoiseTile(ctx2d, x, y, baseColors);
+        for (let i = 0; i < 24; i += 1) {
+          const px = Math.floor(hash2((i * 17) + x, (i * 23) + y) * 26) + 3;
+          const py = Math.floor(hash2((i * 11) + y, (i * 19) + x) * 26) + 3;
+          const color = oreColors[i % oreColors.length];
+          drawPixel(ctx2d, x + px, y + py, color, i % 3 === 0 ? 2 : 1);
+        }
+        drawBorder(ctx2d, x, y, "#b6bcc3", "#343941");
+      };
+
+      paintTile(17, (ctx2d, x, y) => {
+        drawOreTile(ctx2d, x, y, ["#72767d", "#8b9098", "#5d6168", "#a2a8b1", "#7f848d"], ["#d8dde3", "#f6f8fb", "#a8b0ba"]);
+      });
+
+      paintTile(18, (ctx2d, x, y) => {
+        drawOreTile(ctx2d, x, y, ["#6a6f76", "#858c94", "#555a62", "#9ca4ac", "#444952"], ["#4de3ec", "#9ef7ff", "#1689a9"]);
+      });
+
+      paintTile(19, (ctx2d, x, y) => {
+        drawOreTile(ctx2d, x, y, ["#6a6f76", "#858c94", "#555a62", "#9ca4ac", "#444952"], ["#c53d5f", "#ff7aa0", "#7d1432"]);
+      });
+
+      paintTile(20, (ctx2d, x, y) => {
+        fillNoiseTile(ctx2d, x, y, ["#e4cf8f", "#d7be78", "#cdb06b", "#f1deab", "#bfa15f"]);
+        drawBorder(ctx2d, x, y, "#fff1c8", "#a18344");
+      });
+
+      paintTile(21, (ctx2d, x, y) => {
+        ctx2d.clearRect(x, y, 32, 32);
+        ctx2d.fillStyle = "#7f6539";
+        ctx2d.fillRect(x + 6, y + 12, 20, 9);
+        ctx2d.fillRect(x + 8, y + 10, 16, 2);
+        ctx2d.fillRect(x + 8, y + 21, 16, 2);
+        ctx2d.fillStyle = "#f3deb6";
+        ctx2d.fillRect(x + 9, y + 11, 14, 2);
+        ctx2d.fillRect(x + 8, y + 14, 16, 3);
+        ctx2d.fillRect(x + 10, y + 17, 12, 1);
+        ctx2d.fillStyle = "#d2ab74";
+        ctx2d.fillRect(x + 9, y + 18, 14, 2);
+        ctx2d.fillStyle = "#5d4525";
+        ctx2d.fillRect(x + 8, y + 20, 16, 1);
+        ctx2d.fillStyle = "#fff0d0";
+        ctx2d.fillRect(x + 11, y + 12, 4, 1);
+      });
+
+      paintTile(22, (ctx2d, x, y) => {
+        ctx2d.clearRect(x, y, 32, 32);
+        ctx2d.fillStyle = "#1381a1";
+        ctx2d.fillRect(x + 13, y + 5, 6, 4);
+        ctx2d.fillRect(x + 9, y + 9, 14, 12);
+        ctx2d.fillRect(x + 12, y + 21, 8, 4);
+        ctx2d.fillStyle = "#3de6f1";
+        ctx2d.fillRect(x + 14, y + 6, 4, 2);
+        ctx2d.fillRect(x + 10, y + 10, 12, 8);
+        ctx2d.fillRect(x + 13, y + 20, 6, 2);
+        ctx2d.fillStyle = "#bafcff";
+        ctx2d.fillRect(x + 15, y + 8, 2, 2);
+        ctx2d.fillRect(x + 12, y + 12, 5, 2);
+        ctx2d.fillRect(x + 18, y + 13, 2, 3);
+        ctx2d.fillStyle = "#0f5d76";
+        ctx2d.fillRect(x + 11, y + 18, 10, 2);
+        ctx2d.fillRect(x + 13, y + 22, 6, 1);
+      });
+
+      paintTile(23, (ctx2d, x, y) => {
+        ctx2d.clearRect(x, y, 32, 32);
+        ctx2d.fillStyle = "#7a1633";
+        ctx2d.fillRect(x + 13, y + 5, 6, 4);
+        ctx2d.fillRect(x + 9, y + 9, 14, 12);
+        ctx2d.fillRect(x + 12, y + 21, 8, 4);
+        ctx2d.fillStyle = "#d44a74";
+        ctx2d.fillRect(x + 14, y + 6, 4, 2);
+        ctx2d.fillRect(x + 10, y + 10, 12, 8);
+        ctx2d.fillRect(x + 13, y + 20, 6, 2);
+        ctx2d.fillStyle = "#ffc4d7";
+        ctx2d.fillRect(x + 15, y + 8, 2, 2);
+        ctx2d.fillRect(x + 12, y + 12, 5, 2);
+        ctx2d.fillRect(x + 18, y + 13, 2, 3);
+        ctx2d.fillStyle = "#561124";
+        ctx2d.fillRect(x + 11, y + 18, 10, 2);
+        ctx2d.fillRect(x + 13, y + 22, 6, 1);
+      });
+
+      const drawPickaxeIcon = (ctx2d, x, y, headMain, headShade) => {
+        ctx2d.clearRect(x, y, 32, 32);
+        ctx2d.fillStyle = headMain;
+        ctx2d.fillRect(x + 8, y + 4, 18, 5);
+        ctx2d.fillRect(x + 14, y + 8, 4, 18);
+        ctx2d.fillRect(x + 9, y + 9, 5, 4);
+        ctx2d.fillRect(x + 18, y + 9, 5, 4);
+        ctx2d.fillStyle = "#8c5c34";
+        ctx2d.fillRect(x + 15, y + 9, 2, 16);
+        ctx2d.fillRect(x + 9, y + 10, 14, 1);
+        ctx2d.fillStyle = headShade;
+        ctx2d.fillRect(x + 9, y + 5, 14, 1);
+        ctx2d.fillRect(x + 15, y + 9, 1, 14);
+      };
+
+      paintTile(24, (ctx2d, x, y) => {
+        drawPickaxeIcon(ctx2d, x, y, "#d3ae73", "#f6ddb2");
+      });
+
+      paintTile(25, (ctx2d, x, y) => {
+        drawPickaxeIcon(ctx2d, x, y, "#48dced", "#b9faff");
+      });
+
+      paintTile(26, (ctx2d, x, y) => {
+        drawPickaxeIcon(ctx2d, x, y, "#d55079", "#ffadc6");
+      });
+
+      const drawBlockFormTile = (ctx2d, x, y, colors) => {
+        fillNoiseTile(ctx2d, x, y, colors, "stripes");
+        drawVerticalPlankLines(ctx2d, x, y, "rgba(0,0,0,0.16)", "rgba(255,255,255,0.18)", 8);
+        drawHorizontalPlankLines(ctx2d, x, y, "rgba(0,0,0,0.16)", "rgba(255,255,255,0.12)", 8);
+        drawBorder(ctx2d, x, y, colors[0], colors[colors.length - 1]);
+      };
+
+      paintTile(27, (ctx2d, x, y) => {
+        drawBlockFormTile(ctx2d, x, y, ["#efd8a6", "#dcb87d", "#c29a63", "#9b7441"]);
+      });
+
+      paintTile(28, (ctx2d, x, y) => {
+        drawBlockFormTile(ctx2d, x, y, ["#bef8ff", "#74dff2", "#2eb5d1", "#167793"]);
+      });
+
+      paintTile(29, (ctx2d, x, y) => {
+        drawBlockFormTile(ctx2d, x, y, ["#ffbdd2", "#f57c9d", "#cd436d", "#7b1737"]);
+      });
+
+      const drawShovelIcon = (ctx2d, x, y, headMain, headShade) => {
+        ctx2d.clearRect(x, y, 32, 32);
+        ctx2d.fillStyle = headMain;
+        ctx2d.fillRect(x + 11, y + 5, 10, 8);
+        ctx2d.fillRect(x + 13, y + 13, 6, 4);
+        ctx2d.fillStyle = headShade;
+        ctx2d.fillRect(x + 12, y + 6, 8, 2);
+        ctx2d.fillStyle = "#8c5c34";
+        ctx2d.fillRect(x + 15, y + 13, 2, 14);
+        ctx2d.fillStyle = "#d5a56d";
+        ctx2d.fillRect(x + 15, y + 17, 1, 9);
+      };
+
+      const drawAxeIcon = (ctx2d, x, y, headMain, headShade) => {
+        ctx2d.clearRect(x, y, 32, 32);
+        ctx2d.fillStyle = headMain;
+        ctx2d.fillRect(x + 8, y + 5, 10, 10);
+        ctx2d.fillRect(x + 17, y + 7, 4, 6);
+        ctx2d.fillStyle = headShade;
+        ctx2d.fillRect(x + 9, y + 6, 8, 2);
+        ctx2d.fillRect(x + 18, y + 8, 2, 4);
+        ctx2d.fillStyle = "#8c5c34";
+        ctx2d.fillRect(x + 15, y + 13, 2, 14);
+        ctx2d.fillStyle = "#d5a56d";
+        ctx2d.fillRect(x + 15, y + 17, 1, 9);
+      };
+
+      paintTile(30, (ctx2d, x, y) => drawShovelIcon(ctx2d, x, y, "#c38f5c", "#e4b985"));
+      paintTile(31, (ctx2d, x, y) => drawShovelIcon(ctx2d, x, y, "#8c959f", "#d0d7de"));
+      paintTile(32, (ctx2d, x, y) => drawShovelIcon(ctx2d, x, y, "#d3ae73", "#f6ddb2"));
+      paintTile(33, (ctx2d, x, y) => drawShovelIcon(ctx2d, x, y, "#48dced", "#b9faff"));
+      paintTile(34, (ctx2d, x, y) => drawShovelIcon(ctx2d, x, y, "#d55079", "#ffadc6"));
+
+      paintTile(35, (ctx2d, x, y) => drawAxeIcon(ctx2d, x, y, "#c38f5c", "#e4b985"));
+      paintTile(36, (ctx2d, x, y) => drawAxeIcon(ctx2d, x, y, "#8c959f", "#d0d7de"));
+      paintTile(37, (ctx2d, x, y) => drawAxeIcon(ctx2d, x, y, "#d3ae73", "#f6ddb2"));
+      paintTile(38, (ctx2d, x, y) => drawAxeIcon(ctx2d, x, y, "#48dced", "#b9faff"));
+      paintTile(39, (ctx2d, x, y) => drawAxeIcon(ctx2d, x, y, "#d55079", "#ffadc6"));
+
+      paintTile(40, (ctx2d, x, y) => {
+        drawCraftingTopTile(ctx2d, x, y);
+        ctx2d.fillStyle = "#5a2e17";
+        ctx2d.fillRect(x + 7, y + 12, 18, 8);
+        ctx2d.fillStyle = "#c9a16b";
+        ctx2d.fillRect(x + 8, y + 13, 16, 6);
+        ctx2d.fillStyle = "#8d6238";
+        ctx2d.fillRect(x + 14, y + 13, 4, 6);
+      });
+
+      paintTile(41, (ctx2d, x, y) => {
+        fillNoiseTile(ctx2d, x, y, ["#9b6638", "#ac7646", "#835329", "#bf8b56", "#6f421f"], "stripes");
+        drawVerticalPlankLines(ctx2d, x, y, "#6a3d1f", "#c6935f", 8);
+        ctx2d.fillStyle = "#4a2612";
+        ctx2d.fillRect(x + 6, y + 9, 20, 13);
+        ctx2d.fillStyle = "#b88b57";
+        ctx2d.fillRect(x + 7, y + 10, 18, 11);
+        ctx2d.fillStyle = "#754827";
+        ctx2d.fillRect(x + 15, y + 10, 2, 11);
+        ctx2d.fillStyle = "#ebd59b";
+        ctx2d.fillRect(x + 14, y + 14, 4, 3);
+        drawBorder(ctx2d, x, y, "#d4a26d", "#5f3418");
+      });
+
+      paintTile(42, (ctx2d, x, y) => {
+        fillNoiseTile(ctx2d, x, y, ["#8f5c31", "#a67142", "#764a27", "#bc8854", "#663b1c"], "stripes");
+        drawHorizontalPlankLines(ctx2d, x, y, "#6e4121", "#c08b57", 8);
+        drawBorder(ctx2d, x, y, "#d6a16c", "#583016");
+      });
+
       document.documentElement.style.setProperty("--atlas-url", `url("${atlas.toDataURL()}")`);
       const texture = new THREE.CanvasTexture(atlas);
       texture.magFilter = THREE.NearestFilter;
@@ -4886,17 +5803,45 @@
       return BLOCK_INFO[itemId]?.toolTier || 0;
     }
 
+    function getToolType(itemId) {
+      return BLOCK_INFO[itemId]?.toolType || "";
+    }
+
     function getStackLimit(itemId) {
-      return itemId === BLOCK.WOOD_PICKAXE || itemId === BLOCK.STONE_PICKAXE ? 1 : 64;
+      return BLOCK_INFO[itemId]?.toolType ? 1 : 64;
     }
 
     function getActiveCraftingSlots() {
       return state.craftingMode === "table" ? state.tableCraftingSlots : state.inventoryCraftingSlots;
     }
 
+    function getActiveStorageSlots() {
+      return state.storageMode === "chest" ? state.chestSlots : state.slots;
+    }
+
     function openCraftingInterface(mode) {
       state.craftingMode = mode === "table" ? "table" : "inventory";
+      state.storageMode = "crafting";
+      state.chestOpenKey = "";
       setInventoryOpen(true);
+    }
+
+    function openChestInterface(x, y, z) {
+      const key = blockKey(x, y, z);
+      if (!state.chestData.has(key)) {
+        state.chestData.set(key, cloneSlots([], 40));
+      }
+      state.chestOpenKey = key;
+      state.chestSlots = cloneSlots(state.chestData.get(key), 40);
+      state.storageMode = "chest";
+      setInventoryOpen(true);
+    }
+
+    function persistOpenChest() {
+      if (state.storageMode !== "chest" || !state.chestOpenKey) {
+        return;
+      }
+      state.chestData.set(state.chestOpenKey, cloneSlots(state.chestSlots, 40));
     }
 
     function returnCraftingItemsToInventory() {
@@ -4934,43 +5879,102 @@
       return null;
     }
 
+    function matchesExactRecipe(slots, expected) {
+      if (slots.length !== expected.length) {
+        return false;
+      }
+      for (let i = 0; i < expected.length; i += 1) {
+        const slot = slots[i];
+        const need = expected[i];
+        if (need === BLOCK.AIR) {
+          if (slot.id !== BLOCK.AIR || slot.count > 0) {
+            return false;
+          }
+        } else if (slot.id !== need || slot.count <= 0) {
+          return false;
+        }
+      }
+      return true;
+    }
+
     function getMiningOutcome(blockId) {
       const held = getSelectedItem();
       const toolTier = getToolTier(held.id);
+      const toolType = getToolType(held.id);
 
       if (blockId === BLOCK.LEAVES) {
         return { duration: 100, dropId: BLOCK.AIR, dropCount: 0 };
       }
       if (blockId === BLOCK.GRASS) {
-        return { duration: 250, dropId: BLOCK.DIRT, dropCount: 1 };
+        const speed = toolType === "shovel" ? [0, 220, 170, 120, 90, 65][toolTier] || 250 : 250;
+        return { duration: speed, dropId: BLOCK.DIRT, dropCount: 1 };
       }
       if (blockId === BLOCK.DIRT) {
-        return { duration: 500, dropId: BLOCK.DIRT, dropCount: 1 };
+        const speed = toolType === "shovel" ? [0, 260, 180, 120, 90, 65][toolTier] || 500 : 500;
+        return { duration: speed, dropId: BLOCK.DIRT, dropCount: 1 };
+      }
+      if (blockId === BLOCK.SAND) {
+        const speed = toolType === "shovel" ? [0, 220, 160, 110, 85, 60][toolTier] || 350 : 350;
+        return { duration: speed, dropId: BLOCK.SAND, dropCount: 1 };
       }
       if (blockId === BLOCK.OAK_LOG) {
-        return { duration: 2000, dropId: BLOCK.OAK_LOG, dropCount: 1 };
+        const speed = toolType === "axe" ? [0, 1300, 900, 620, 430, 300][toolTier] || 2000 : 2000;
+        return { duration: speed, dropId: BLOCK.OAK_LOG, dropCount: 1 };
       }
       if (blockId === BLOCK.OAK_PLANKS) {
-        return { duration: 1000, dropId: BLOCK.OAK_PLANKS, dropCount: 1 };
+        const speed = toolType === "axe" ? [0, 700, 520, 360, 250, 180][toolTier] || 1000 : 1000;
+        return { duration: speed, dropId: BLOCK.OAK_PLANKS, dropCount: 1 };
       }
       if (blockId === BLOCK.CRAFTING_TABLE) {
-        return { duration: 3000, dropId: BLOCK.CRAFTING_TABLE, dropCount: 1 };
+        const speed = toolType === "axe" ? [0, 1800, 1400, 980, 700, 520][toolTier] || 3000 : 3000;
+        return { duration: speed, dropId: BLOCK.CRAFTING_TABLE, dropCount: 1 };
+      }
+      if (blockId === BLOCK.CHEST) {
+        const speed = toolType === "axe" ? [0, 1900, 1450, 1020, 760, 560][toolTier] || 3200 : 3200;
+        return { duration: speed, dropId: BLOCK.CHEST, dropCount: 1 };
+      }
+      if (blockId === BLOCK.WATER) {
+        return { duration: 100, dropId: BLOCK.AIR, dropCount: 0 };
       }
       if (blockId === BLOCK.STONE) {
-        if (toolTier >= 2) {
-          return { duration: 1000, dropId: BLOCK.COBBLESTONE, dropCount: 1 };
-        }
-        if (toolTier >= 1) {
-          return { duration: 2000, dropId: BLOCK.COBBLESTONE, dropCount: 1 };
+        if (toolType === "pickaxe" && toolTier >= 1) {
+          const speed = [0, 2200, 1500, 1000, 720, 520][toolTier] || 2200;
+          return { duration: speed, dropId: BLOCK.COBBLESTONE, dropCount: 1 };
         }
         return { duration: 10000, dropId: BLOCK.AIR, dropCount: 0 };
       }
       if (blockId === BLOCK.COBBLESTONE) {
-        if (toolTier >= 2) {
-          return { duration: 1000, dropId: BLOCK.COBBLESTONE, dropCount: 1 };
+        if (toolType === "pickaxe" && toolTier >= 1) {
+          const speed = [0, 2200, 1500, 1000, 720, 520][toolTier] || 2200;
+          return { duration: speed, dropId: BLOCK.COBBLESTONE, dropCount: 1 };
         }
-        if (toolTier >= 1) {
-          return { duration: 2000, dropId: BLOCK.COBBLESTONE, dropCount: 1 };
+        return { duration: 10000, dropId: BLOCK.AIR, dropCount: 0 };
+      }
+      if (blockId === BLOCK.IRON_ORE) {
+        if (toolType === "pickaxe" && toolTier >= 2) {
+          const speed = [0, 0, 2200, 1500, 1050, 780][toolTier] || 2200;
+          return { duration: speed, dropId: BLOCK.IRON_INGOT, dropCount: 1 };
+        }
+        return { duration: 10000, dropId: BLOCK.AIR, dropCount: 0 };
+      }
+      if (blockId === BLOCK.DIAMOND_ORE) {
+        if (toolType === "pickaxe" && toolTier >= 3) {
+          const speed = [0, 0, 0, 2600, 1800, 1280][toolTier] || 2600;
+          return { duration: speed, dropId: BLOCK.DIAMOND_GEM, dropCount: 1 };
+        }
+        return { duration: 10000, dropId: BLOCK.AIR, dropCount: 0 };
+      }
+      if (blockId === BLOCK.RUBY_ORE) {
+        if (toolType === "pickaxe" && toolTier >= 4) {
+          const speed = [0, 0, 0, 0, 3000, 2100][toolTier] || 3000;
+          return { duration: speed, dropId: BLOCK.RUBY_GEM, dropCount: 1 };
+        }
+        return { duration: 10000, dropId: BLOCK.AIR, dropCount: 0 };
+      }
+      if (blockId === BLOCK.IRON_BLOCK || blockId === BLOCK.DIAMOND_BLOCK || blockId === BLOCK.RUBY_BLOCK) {
+        if (toolType === "pickaxe" && toolTier >= 2) {
+          const speed = [0, 0, 2400, 1750, 1250, 920][toolTier] || 2400;
+          return { duration: speed, dropId: blockId, dropCount: 1 };
         }
         return { duration: 10000, dropId: BLOCK.AIR, dropCount: 0 };
       }
@@ -4986,6 +5990,21 @@
       const outcome = getMiningOutcome(blockId);
       if (outcome.dropId !== BLOCK.AIR && outcome.dropCount > 0) {
         spawnDroppedItem(x + 0.5, y + 0.35, z + 0.5, outcome.dropId, outcome.dropCount);
+      }
+      if (blockId === BLOCK.CHEST) {
+        const key = blockKey(x, y, z);
+        const chestSlots = state.chestData.get(key) || [];
+        for (const slot of chestSlots) {
+          if (slot.id !== BLOCK.AIR && slot.count > 0) {
+            spawnDroppedItem(x + 0.5, y + 0.45, z + 0.5, slot.id, slot.count);
+          }
+        }
+        state.chestData.delete(key);
+        if (state.chestOpenKey === key) {
+          state.storageMode = "crafting";
+          state.chestOpenKey = "";
+          state.chestSlots = cloneSlots([], 40);
+        }
       }
       setBlock(x, y, z, BLOCK.AIR);
       updateInventoryUi();
@@ -5100,6 +6119,15 @@
       }
 
       if (state.craftingMode === "table") {
+        const chestPattern = [
+          BLOCK.OAK_PLANKS, BLOCK.OAK_PLANKS, BLOCK.OAK_PLANKS,
+          BLOCK.OAK_PLANKS, BLOCK.AIR, BLOCK.OAK_PLANKS,
+          BLOCK.OAK_PLANKS, BLOCK.OAK_PLANKS, BLOCK.OAK_PLANKS
+        ];
+        if (matchesExactRecipe(slots, chestPattern)) {
+          return { id: BLOCK.CHEST, count: 1, recipe: "chest" };
+        }
+
         const topA = slots[0];
         const topB = slots[1];
         const topC = slots[2];
@@ -5112,6 +6140,49 @@
           }
           if (topA.id === BLOCK.COBBLESTONE && topB.id === BLOCK.COBBLESTONE && topC.id === BLOCK.COBBLESTONE) {
             return { id: BLOCK.STONE_PICKAXE, count: 1, recipe: "stone_pickaxe" };
+          }
+          if (topA.id === BLOCK.IRON_INGOT && topB.id === BLOCK.IRON_INGOT && topC.id === BLOCK.IRON_INGOT) {
+            return { id: BLOCK.IRON_PICKAXE, count: 1, recipe: "iron_pickaxe" };
+          }
+          if (topA.id === BLOCK.DIAMOND_GEM && topB.id === BLOCK.DIAMOND_GEM && topC.id === BLOCK.DIAMOND_GEM) {
+            return { id: BLOCK.DIAMOND_PICKAXE, count: 1, recipe: "diamond_pickaxe" };
+          }
+          if (topA.id === BLOCK.RUBY_GEM && topB.id === BLOCK.RUBY_GEM && topC.id === BLOCK.RUBY_GEM) {
+            return { id: BLOCK.RUBY_PICKAXE, count: 1, recipe: "ruby_pickaxe" };
+          }
+        }
+
+        const fullIronBlock = new Array(9).fill(BLOCK.IRON_INGOT);
+        if (matchesExactRecipe(slots, fullIronBlock)) {
+          return { id: BLOCK.IRON_BLOCK, count: 1, recipe: "iron_block" };
+        }
+
+        const fullDiamondBlock = new Array(9).fill(BLOCK.DIAMOND_GEM);
+        if (matchesExactRecipe(slots, fullDiamondBlock)) {
+          return { id: BLOCK.DIAMOND_BLOCK, count: 1, recipe: "diamond_block" };
+        }
+
+        const fullRubyBlock = new Array(9).fill(BLOCK.RUBY_GEM);
+        if (matchesExactRecipe(slots, fullRubyBlock)) {
+          return { id: BLOCK.RUBY_BLOCK, count: 1, recipe: "ruby_block" };
+        }
+
+        const toolRecipes = [
+          { material: BLOCK.OAK_PLANKS, result: BLOCK.WOOD_SHOVEL, recipe: "wood_shovel", shape: [BLOCK.AIR, BLOCK.OAK_PLANKS, BLOCK.AIR, BLOCK.AIR, BLOCK.STICK, BLOCK.AIR, BLOCK.AIR, BLOCK.STICK, BLOCK.AIR] },
+          { material: BLOCK.COBBLESTONE, result: BLOCK.STONE_SHOVEL, recipe: "stone_shovel", shape: [BLOCK.AIR, BLOCK.COBBLESTONE, BLOCK.AIR, BLOCK.AIR, BLOCK.STICK, BLOCK.AIR, BLOCK.AIR, BLOCK.STICK, BLOCK.AIR] },
+          { material: BLOCK.IRON_INGOT, result: BLOCK.IRON_SHOVEL, recipe: "iron_shovel", shape: [BLOCK.AIR, BLOCK.IRON_INGOT, BLOCK.AIR, BLOCK.AIR, BLOCK.STICK, BLOCK.AIR, BLOCK.AIR, BLOCK.STICK, BLOCK.AIR] },
+          { material: BLOCK.DIAMOND_GEM, result: BLOCK.DIAMOND_SHOVEL, recipe: "diamond_shovel", shape: [BLOCK.AIR, BLOCK.DIAMOND_GEM, BLOCK.AIR, BLOCK.AIR, BLOCK.STICK, BLOCK.AIR, BLOCK.AIR, BLOCK.STICK, BLOCK.AIR] },
+          { material: BLOCK.RUBY_GEM, result: BLOCK.RUBY_SHOVEL, recipe: "ruby_shovel", shape: [BLOCK.AIR, BLOCK.RUBY_GEM, BLOCK.AIR, BLOCK.AIR, BLOCK.STICK, BLOCK.AIR, BLOCK.AIR, BLOCK.STICK, BLOCK.AIR] },
+          { material: BLOCK.OAK_PLANKS, result: BLOCK.WOOD_AXE, recipe: "wood_axe", shape: [BLOCK.AIR, BLOCK.OAK_PLANKS, BLOCK.OAK_PLANKS, BLOCK.AIR, BLOCK.STICK, BLOCK.OAK_PLANKS, BLOCK.AIR, BLOCK.STICK, BLOCK.AIR] },
+          { material: BLOCK.COBBLESTONE, result: BLOCK.STONE_AXE, recipe: "stone_axe", shape: [BLOCK.AIR, BLOCK.COBBLESTONE, BLOCK.COBBLESTONE, BLOCK.AIR, BLOCK.STICK, BLOCK.COBBLESTONE, BLOCK.AIR, BLOCK.STICK, BLOCK.AIR] },
+          { material: BLOCK.IRON_INGOT, result: BLOCK.IRON_AXE, recipe: "iron_axe", shape: [BLOCK.AIR, BLOCK.IRON_INGOT, BLOCK.IRON_INGOT, BLOCK.AIR, BLOCK.STICK, BLOCK.IRON_INGOT, BLOCK.AIR, BLOCK.STICK, BLOCK.AIR] },
+          { material: BLOCK.DIAMOND_GEM, result: BLOCK.DIAMOND_AXE, recipe: "diamond_axe", shape: [BLOCK.AIR, BLOCK.DIAMOND_GEM, BLOCK.DIAMOND_GEM, BLOCK.AIR, BLOCK.STICK, BLOCK.DIAMOND_GEM, BLOCK.AIR, BLOCK.STICK, BLOCK.AIR] },
+          { material: BLOCK.RUBY_GEM, result: BLOCK.RUBY_AXE, recipe: "ruby_axe", shape: [BLOCK.AIR, BLOCK.RUBY_GEM, BLOCK.RUBY_GEM, BLOCK.AIR, BLOCK.STICK, BLOCK.RUBY_GEM, BLOCK.AIR, BLOCK.STICK, BLOCK.AIR] }
+        ];
+
+        for (const recipe of toolRecipes) {
+          if (matchesExactRecipe(slots, recipe.shape)) {
+            return { id: recipe.result, count: 1, recipe: recipe.recipe };
           }
         }
       }
@@ -5156,10 +6227,65 @@
         });
       }
 
-      if (recipeName === "wood_pickaxe" || recipeName === "stone_pickaxe") {
+      if (["wood_pickaxe", "stone_pickaxe", "iron_pickaxe", "diamond_pickaxe", "ruby_pickaxe"].includes(recipeName)) {
         [0, 1, 2, 4, 7].forEach((index) => {
           const slot = slots[index];
           if (!slot || slot.id === BLOCK.AIR) {
+            return;
+          }
+          slot.count -= 1;
+          if (slot.count <= 0) {
+            slot.id = BLOCK.AIR;
+            slot.count = 0;
+          }
+        });
+      }
+
+      if (["iron_block", "diamond_block", "ruby_block"].includes(recipeName)) {
+        slots.forEach((slot) => {
+          if (slot.id === BLOCK.AIR) {
+            return;
+          }
+          slot.count -= 1;
+          if (slot.count <= 0) {
+            slot.id = BLOCK.AIR;
+            slot.count = 0;
+          }
+        });
+      }
+
+      if (["wood_shovel", "stone_shovel", "iron_shovel", "diamond_shovel", "ruby_shovel"].includes(recipeName)) {
+        [1, 4, 7].forEach((index) => {
+          const slot = slots[index];
+          if (!slot || slot.id === BLOCK.AIR) {
+            return;
+          }
+          slot.count -= 1;
+          if (slot.count <= 0) {
+            slot.id = BLOCK.AIR;
+            slot.count = 0;
+          }
+        });
+      }
+
+      if (["wood_axe", "stone_axe", "iron_axe", "diamond_axe", "ruby_axe"].includes(recipeName)) {
+        [1, 2, 4, 5, 7].forEach((index) => {
+          const slot = slots[index];
+          if (!slot || slot.id === BLOCK.AIR) {
+            return;
+          }
+          slot.count -= 1;
+          if (slot.count <= 0) {
+            slot.id = BLOCK.AIR;
+            slot.count = 0;
+          }
+        });
+      }
+
+      if (recipeName === "chest") {
+        [0, 1, 2, 3, 5, 6, 7, 8].forEach((index) => {
+          const slot = slots[index];
+          if (!slot || slot.id !== BLOCK.OAK_PLANKS) {
             return;
           }
           slot.count -= 1;
@@ -5176,11 +6302,15 @@
     function updateInventoryUi() {
       hotbarEl.innerHTML = "";
       inventoryGridEl.innerHTML = "";
+      chestGridEl.innerHTML = "";
       craftingGridEl.innerHTML = "";
       bottomBar.classList.toggle("inventory-hidden", !state.inventoryOpen);
       bottomBar.classList.toggle("inventory-open", state.inventoryOpen);
+      chestPanelEl.classList.toggle("hidden", state.storageMode !== "chest");
+      chestPanelEl.parentElement?.classList.toggle("dual", state.storageMode === "chest");
+      chestTitleEl.textContent = "chest";
       state.craftResult = getCraftingRecipe();
-      craftingTitleEl.textContent = state.craftingMode === "table" ? "crafting table" : "crafting";
+      craftingTitleEl.textContent = state.storageMode === "chest" ? "crafting" : state.craftingMode === "table" ? "crafting table" : "crafting";
       craftingGridEl.classList.toggle("workbench", state.craftingMode === "table");
 
       state.slots.slice(0, 10).forEach((slot, index) => {
@@ -5191,12 +6321,19 @@
         inventoryGridEl.appendChild(makeSlot(slot, "inventory", index + 10, false));
       });
 
+      if (state.storageMode === "chest") {
+        state.chestSlots.forEach((slot, index) => {
+          chestGridEl.appendChild(makeSlot(slot, "chest", index, false));
+        });
+      }
+
       getActiveCraftingSlots().forEach((slot, index) => {
         craftingGridEl.appendChild(makeSlot(slot, "crafting", index, false));
       });
 
       renderCraftResultSlot();
       updateHeldItemUi();
+      updateHeartsUi();
     }
 
     function makeSlot(slot, slotType, index, active) {
@@ -5256,17 +6393,21 @@
       const icon = document.createElement("div");
       icon.className = "slot-icon";
       const tileIndex = getBlockTile(blockId, 2);
-      const tileX = tileIndex % 4;
-      const tileY = Math.floor(tileIndex / 4);
+      const tileX = tileIndex % 8;
+      const tileY = Math.floor(tileIndex / 8);
       icon.style.width = `${size}px`;
       icon.style.height = `${size}px`;
-      icon.style.backgroundSize = `${size * 4}px ${size * 4}px`;
+      icon.style.backgroundSize = `${size * 8}px ${size * 8}px`;
       icon.style.backgroundPosition = `${-tileX * size}px ${-tileY * size}px`;
       return icon;
     }
 
     function isToolItem(blockId) {
-      return blockId === BLOCK.STICK || blockId === BLOCK.WOOD_PICKAXE || blockId === BLOCK.STONE_PICKAXE;
+      return blockId === BLOCK.STICK || Boolean(BLOCK_INFO[blockId]?.toolType);
+    }
+
+    function isFlatItem(blockId) {
+      return isToolItem(blockId) || [BLOCK.IRON_INGOT, BLOCK.DIAMOND_GEM, BLOCK.RUBY_GEM].includes(blockId);
     }
 
     function getTileTexture(tileIndex) {
@@ -5288,8 +6429,8 @@
         return tileCanvasCache.get(tileIndex);
       }
 
-      const tileX = tileIndex % 4;
-      const tileY = Math.floor(tileIndex / 4);
+      const tileX = tileIndex % 8;
+      const tileY = Math.floor(tileIndex / 8);
       const iconCanvas = document.createElement("canvas");
       iconCanvas.width = 32;
       iconCanvas.height = 32;
@@ -5421,7 +6562,7 @@
 
     function createItemDisplayMesh(blockId, mode = "preview") {
       let mesh = null;
-      if (isToolItem(blockId)) {
+      if (isFlatItem(blockId)) {
         mesh = createToolItemMesh(blockId, mode);
       } else {
         const scale = mode === "world" ? 0.34 : 1;
@@ -5429,7 +6570,7 @@
       }
 
       if (mode === "world") {
-        if (isToolItem(blockId)) {
+        if (isFlatItem(blockId)) {
           mesh.scale.setScalar(0.16);
         }
         mesh.rotation.x = -0.42;
@@ -5524,6 +6665,9 @@
       if (slotType === "inventory") {
         return state.slots;
       }
+      if (slotType === "chest") {
+        return state.chestSlots;
+      }
       if (slotType === "crafting") {
         return getActiveCraftingSlots();
       }
@@ -5555,6 +6699,9 @@
       state.drag.mouseY = mouseY;
       slot.id = BLOCK.AIR;
       slot.count = 0;
+      if (slotType === "chest") {
+        persistOpenChest();
+      }
       state.craftResult = getCraftingRecipe();
       updateInventoryUi();
       updateDragGhost();
@@ -5677,12 +6824,18 @@
         state.drag.stack = swap;
         state.drag.sourceType = slotType;
         state.drag.sourceIndex = index;
+        if (slotType === "chest" || state.drag.sourceType === "chest") {
+          persistOpenChest();
+        }
         state.craftResult = getCraftingRecipe();
         updateInventoryUi();
         updateDragGhost();
         return;
       }
 
+      if (slotType === "chest" || state.drag.sourceType === "chest") {
+        persistOpenChest();
+      }
       clearDrag();
       state.craftResult = getCraftingRecipe();
       updateInventoryUi();
@@ -5715,6 +6868,9 @@
       }
 
       state.drag.stack.count -= 1;
+      if (slotType === "chest" || state.drag.sourceType === "chest") {
+        persistOpenChest();
+      }
       if (state.drag.stack.count <= 0) {
         clearDrag();
       }
@@ -5748,6 +6904,9 @@
       state.drag.lastTouchTapSlot = null;
       state.drag.lastTouchTapAt = 0;
       clearTouchCommitTimer();
+      if (state.storageMode === "chest") {
+        persistOpenChest();
+      }
       state.drag.stack = { id: BLOCK.AIR, count: 0 };
       dragGhost.classList.add("hidden");
       setPreviewItem(dragPreview, BLOCK.AIR);
@@ -5776,6 +6935,10 @@
 
     function updateStatusLine() {
       if (!state.started) {
+        return;
+      }
+      if (state.dead) {
+        statusLine.textContent = "you died";
         return;
       }
 
@@ -5815,8 +6978,11 @@
         document.exitPointerLock?.();
       } else {
         clearDrag(true);
+        persistOpenChest();
         returnCraftingItemsToInventory();
         state.craftingMode = "inventory";
+        state.storageMode = "crafting";
+        state.chestOpenKey = "";
         lastPointerMoveAt = performance.now();
       }
 
@@ -5825,7 +6991,7 @@
     }
 
     function setPaused(nextPaused) {
-      if (!state.started) {
+      if (!state.started || state.dead) {
         return;
       }
 
@@ -5852,15 +7018,18 @@
 
     function leaveToMainMenu() {
       if (state.started) {
+        persistOpenChest();
         saveWorldState();
       }
 
       state.paused = false;
+      state.dead = false;
       setInventoryOpen(false);
       closeSettingsMenus();
       state.started = false;
       state.keys.clear();
       pauseMenu.classList.add("hidden");
+      deathMenu.classList.add("hidden");
       gameShell.classList.add("hidden");
       screen.classList.remove("hidden");
       mainMenu.classList.remove("hidden");
@@ -5918,7 +7087,7 @@
         const dz = state.player.position.z - drop.mesh.position.z;
         const dist = Math.sqrt((dx * dx) + (dy * dy) + (dz * dz));
 
-        if (dist < 1.2) {
+        if (!state.dead && dist < 1.2) {
           const speed = Math.max(10, dist / 0.1);
           drop.mesh.position.x += (dx / Math.max(dist, 0.001)) * speed * delta;
           drop.mesh.position.y += (dy / Math.max(dist, 0.001)) * speed * delta;
@@ -5941,7 +7110,7 @@
 
         drop.mesh.rotation.y += delta * drop.spin;
 
-        if (dist < 0.45 && addToInventory(drop.id, drop.count)) {
+        if (!state.dead && dist < 0.45 && addToInventory(drop.id, drop.count)) {
           scene.remove(drop.mesh);
           updateInventoryUi();
           continue;
